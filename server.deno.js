@@ -1,4 +1,4 @@
-import { serveDir } from "jsr:@std/http/file-server"
+import { serveDir } from "jsr:@std/http/file-server";
 
 /**
  * APIリクエストを処理する
