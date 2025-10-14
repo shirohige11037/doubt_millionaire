@@ -1,0 +1,79 @@
+/* style.css */
+body {
+  font-family: "Arial", sans-serif;
+  background-color: #0abd4e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+form {
+  width: 90%;
+  max-width: 400px;
+  padding: 1.5em;
+  margin: 1em auto;
+  background-color: white;
+  padding: 2em;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 320px;
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+}
+
+label {
+  display: block;
+  margin-top: 1em;
+  font-weight: bold;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 0.6em;
+  margin-top: 0.4em;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+button {
+  margin-top: 1.5em;
+  width: 100%;
+  background-color: #0078d4;
+  color: white;
+  padding: 0.8em;
+  border: none;
+  border-radius: 6px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background-color: #005ea2;
+}
+/* style.css の一番下に追加 */
+@media (max-width: 600px) {
+  body {
+    padding: 1em;
+    background-size: cover;
+  }
+
+  form {
+    width: 100%;
+    padding: 1em;
+    font-size: 0.9em;
+  }
+
+  input, textarea {
+    font-size: 1em;
+  }
+
+  button {
+    padding: 0.7em;
+  }
+}
