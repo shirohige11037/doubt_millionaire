@@ -8,28 +8,24 @@
     
     <style>
         /* =======================================================
-           全般・待合所スタイルの統合
+           全般・統合スタイル
            ======================================================= */
         body {
-            /* 待合所の緑色を全体背景に採用 */
-            background-color: #388E3C; /* 以前のルール設定の深い緑 */
-            color: #333; /* 待合所エリア外のテキスト色 */
+            /* 背景色: 深い緑 */
+            background-color: #388E3C; 
+            color: #333; 
             font-family: "Arial", "Hiragino Kaku Gothic ProN", sans-serif;
             margin: 0;
             padding: 0;
-            /* 待合所とルール設定を縦に並べるため、flex設定をリセット */
-            display: block; 
+            display: block; /* 縦スクロールを有効にする */
             min-height: 100vh;
             box-sizing: border-box;
         }
 
         /* -------------------- 待合所エリア -------------------- */
-        /* 待合所コンテンツを中央に配置するラッパー */
         #waiting-room-wrapper {
-            /* 画面上部に見せるため、paddingで調整 */
             padding-top: 50px; 
             padding-bottom: 20px;
-            /* 中央配置 */
             display: flex;
             justify-content: center;
             width: 100%;
@@ -42,7 +38,6 @@
             width: 320px; /* スマホサイズ固定 */
             text-align: center;
             box-shadow: 0 0 20px rgba(0,0,0,0.2);
-            /* ルール設定との隙間を作る */
             margin-bottom: 30px; 
         }
 
@@ -77,7 +72,6 @@
         }
 
         .leader::after {
-             /* 星の絵文字をリーダーアイコンに表示 */
             content: "👑"; 
             position: absolute;
             top: -10px;
@@ -125,15 +119,12 @@
             background: #d7382e;
         }
 
-        /* =======================================================
-           ルール設定スタイル
-           ======================================================= */
+        /* -------------------- ルール設定エリア -------------------- */
         #rule-app-container {
-            /* 待合所と区別するために背景を調整 */
             background-color: rgba(0, 0, 0, 0.1); 
             padding: 20px;
             color: #fff;
-            max-width: 400px; /* スマホでの見やすさのため最大幅を設定 */
+            max-width: 400px; 
             margin: 0 auto;
         }
         
@@ -163,7 +154,7 @@
             background-color: rgba(0, 0, 0, 0.2);
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            list-style: none; /* list-styleを念のため削除 */
+            list-style: none;
         }
 
         .rule-description {
@@ -201,25 +192,22 @@
             position: relative;
         }
 
-        /* スイッチ本体（見えないチェックボックス） */
         .switch-input {
             opacity: 0;
             width: 0;
             height: 0;
         }
 
-        /* スライダーのベース部分 */
         .switch-slider {
             position: relative;
             width: 60px;
             height: 34px;
-            background-color: #ccc;
+            background-color: #ccc; /* OFFの状態 */
             border-radius: 34px;
             transition: 0.4s;
             flex-shrink: 0;
         }
 
-        /* スライダーの丸いツマミ */
         .switch-slider:before {
             position: absolute;
             content: "";
@@ -232,7 +220,7 @@
             transition: 0.4s;
         }
 
-        /* チェックされた時の背景色とツマミの位置 */
+        /* ON時のスタイル */
         .switch-input:checked + .switch-slider {
             background-color: #4CAF50;
         }
@@ -241,7 +229,6 @@
             transform: translateX(26px);
         }
 
-        /* ON/OFF表示 */
         .switch-slider:after {
             content: "OFF";
             position: absolute;
@@ -306,22 +293,22 @@
             <h2>固定ルール（常にON）</h2>
             <div class="rule-item fixed">
                 <div class="rule-description">
-                    <h3>8切り (エイト・ストップ)</h3>
-                    <p>数字の「8」が出されたら、その場が流れます（次の人は最初からカードを出せる）。</p>
+                    <h3>8切り</h3>
+                    <p>数字の「8」が出されたら、その場が流れる。（次の人は最初からカードを出せる）。</p>
                 </div>
                 <div class="switch-container fixed-on">ON</div>
             </div>
             <div class="rule-item fixed">
                 <div class="rule-description">
-                    <h3>11バック (イレブン・バック)</h3>
-                    <p>数字の「J (11)」が出されたら、その場限りカードの強さが逆転します。</p>
+                    <h3>11バック</h3>
+                    <p>数字の「J(11)」が出されたら、その場限りカードの強さが逆転する。</p>
                 </div>
                 <div class="switch-container fixed-on">ON</div>
             </div>
             <div class="rule-item fixed">
                 <div class="rule-description">
                     <h3>革命</h3>
-                    <p>同じ数字のカードを4枚同時に出すと、カードの強さが大富豪が終わるまで逆転します。</p>
+                    <p>同じ数字のカードを4枚同時に出すと、カードの強さが逆転します。</p>
                 </div>
                 <div class="switch-container fixed-on">ON</div>
             </div>
@@ -332,67 +319,179 @@
 
             <label class="rule-item switchable">
                 <div class="rule-description">
-                    <h3>4止め (フォー・ストップ)</h3>
-                    <p>「4」が場に出たとき、次の人はパスをするしかなく、場が流れます。</p>
+                    <h3>4止め</h3>
+                    <p>「8」が場に出された後、「4」を場に2枚出すと場が流れる</p>
                 </div>
-                <input type="checkbox" id="rule-4dome" class="switch-input" checked>
+                <input type="checkbox" id="rule-4止め" class="switch-input">
                 <span class="switch-slider"></span>
             </label>
 
             <label class="rule-item switchable">
                 <div class="rule-description">
-                    <h3>5すき (ファイブ・スキップ)</h3>
-                    <p>数字の「5」が出されたとき、次の人がカードを出せず、パスになります。</p>
+                    <h3>5スキップ</h3>
+                    <p>数字の「5」が出されたとき、出された枚数だけ人がカードを出せずパスになります。</p>
                 </div>
-                <input type="checkbox" id="rule-5suki" class="switch-input">
+                <input type="checkbox" id="rule-5すき" class="switch-input">
                 <span class="switch-slider"></span>
             </label>
 
             <label class="rule-item switchable">
                 <div class="rule-description">
-                    <h3>7渡し (セブン・パサー)</h3>
-                    <p>数字の「7」が出されたとき、次の人はカードを出さずに、その次の人に手番が移ります。</p>
+                    <h3>7渡し</h3>
+                    <p>数字の「7」が出されたとき、自分の手札から「7」を出した数だけ次の人に渡せる。</p>
                 </div>
-                <input type="checkbox" id="rule-7watashi" class="switch-input" checked>
+                <input type="checkbox" id="rule-7渡し" class="switch-input">
                 <span class="switch-slider"></span>
             </label>
 
             <label class="rule-item switchable">
                 <div class="rule-description">
-                    <h3>9リバース (ナイン・リバース)</h3>
-                    <p>数字の「9」が出されたとき、カードを出す順番が逆周りになります。</p>
+                    <h3>9リバース</h3>
+                    <p>数字の「9」が出されたとき、カードを出す順番が逆周りになる。</p>
                 </div>
-                <input type="checkbox" id="rule-9reverse" class="switch-input">
+                <input type="checkbox" id="rule-9リバース" class="switch-input">
                 <span class="switch-slider"></span>
             </label>
 
             <label class="rule-item switchable">
                 <div class="rule-description">
-                    <h3>10捨て (テン・チェンジ/テン・アボリッシュ)</h3>
-                    <p>数字の「10」が出されたら、場札がすべて流れます。次の人は最初からカードを出せます。</p>
+                    <h3>10捨て</h3>
+                    <p>数字の「10」が出されたら、自分の手札から「10」が出された数だけ場に捨てれる。</p>
                 </div>
-                <input type="checkbox" id="rule-10sute" class="switch-input">
+                <input type="checkbox" id="rule-10捨て" class="switch-input">
                 <span class="switch-slider"></span>
             </label>
 
             <label class="rule-item switchable">
                 <div class="rule-description">
                     <h3>大革命</h3>
-                    <p>同じ数字のカードを5枚以上同時に出すと、革命が起きた後さらに強さの順序が逆転します。</p>
+                    <p>同じ数字のカードを6枚同時に出すと、カードの強さが逆転し無条件でゲームに勝利する。</p>
                 </div>
-                <input type="checkbox" id="rule-daikakumei" class="switch-input" checked>
+                <input type="checkbox" id="rule-大革命" class="switch-input">
                 <span class="switch-slider"></span>
             </label>
 
             <label class="rule-item switchable">
                 <div class="rule-description">
                     <h3>下剋上</h3>
-                    <p>大富豪が最初に上がると、次の回は大富豪と大貧民の地位が入れ替わります。</p>
+                    <p>同じ数字のカードを5枚同時に出すと、ゲームに勝利する。</p>
                 </div>
-                <input type="checkbox" id="rule-gekokujo" class="switch-input">
+                <input type="checkbox" id="rule-下剋上" class="switch-input">
                 <span class="switch-slider"></span>
             </label>
         </section>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // ----------------------------------------------------------------
+            // 1. データ定義と状態管理
+            // ----------------------------------------------------------------
+
+            // 常にONで変更できない固定ルール (参照用)
+            const FIXED_RULES = {
+                '8切り': '8切り (エイト・ストップ)',
+                '11バック': '11バック (イレブン・バック)',
+                '革命': '革命'
+            };
+
+            // 変更可能なオプションルールと初期設定 (全て 'false')
+            let optionalRulesState = {
+                '4止め': false,
+                '5すき': false,
+                '7渡し': false,
+                '9リバース': false,
+                '10捨て': false,
+                '大革命': false,
+                '下剋上': false
+            };
+            
+            // ユーザーがリーダーかどうかを判定するフラグ
+            // 画面の「ユーザー1 (リーダー)」に対応
+            const isLeader = true; 
+
+            // ----------------------------------------------------------------
+            // 2. 初期化処理とイベントリスナーの設定
+            // ----------------------------------------------------------------
+
+            const ruleAppContainer = document.getElementById('rule-app-container');
+            const switches = ruleAppContainer.querySelectorAll('.switch-input');
+
+            switches.forEach(switchElement => {
+                const ruleId = switchElement.id.replace('rule-', '');
+
+                // 初期状態を全て 'off' (checked=false) に設定
+                switchElement.checked = false;
+
+                switchElement.addEventListener('change', (event) => {
+                    if (!isLeader) {
+                        // リーダーではない場合、変更をキャンセルし、元の状態に戻す
+                        event.target.checked = !event.target.checked;
+                        alert('ルールを変更できるのは部屋のリーダーのみです。');
+                        return;
+                    }
+
+                    // リーダーの場合、状態を更新
+                    const newRuleId = event.target.id.replace('rule-', '');
+                    const newState = event.target.checked;
+                    
+                    optionalRulesState[newRuleId] = newState;
+
+                    console.log(`ルール "${newRuleId}" が ${newState ? 'ON' : 'OFF'} に変更されました。`);
+                    
+                    // 変更後、サーバーにデータを送信
+                    sendRulesToServer(optionalRulesState);
+                });
+            });
+
+
+            // ----------------------------------------------------------------
+            // 3. サーバーへのデータ送信関数
+            // ----------------------------------------------------------------
+
+            /**
+             * 現在のルール設定をサーバーに送信するダミー関数。
+             * @param {Object} rulesData - 送信するオプションルール設定のオブジェクト
+             * @param {string} format - 送信するデータ形式 ('json' | 'formdata' など)
+             */
+            function sendRulesToServer(rulesData, format = 'json') {
+                const payload = {};
+
+                // ON/OFFの状態を持つルールのみを抽出
+                for (const rule in rulesData) {
+                    if (rulesData.hasOwnProperty(rule)) {
+                         payload[rule] = rulesData[rule]; // 真偽値を送信
+                    }
+                }
+
+                console.log("--- サーバーに送信するデータ ---");
+                console.log(`形式: ${format}`);
+                
+                let dataToSend;
+                
+                if (format === 'json') {
+                    // JSON形式
+                    dataToSend = JSON.stringify({ 
+                        roomId: 'room123', // 例: ルームID
+                        rules: payload 
+                    });
+                    console.log(dataToSend);
+                } else if (format === 'formdata') {
+                    // FormData形式
+                    dataToSend = new FormData();
+                    dataToSend.append('roomId', 'room123');
+                    dataToSend.append('rules', JSON.stringify(payload));
+                    console.log("FormDataのコンテンツ:");
+                    console.log(payload);
+                } else {
+                    console.log(`エラー: 未対応の送信形式 (${format}) です。`);
+                    return;
+                }
+
+                // ここに実際の fetch() や XMLHttpRequest のコードが入ります。
+                console.log("データがサーバーへの送信を試行しました。(デモ)");
+            }
+        });
+    </script>
 </body>
 </html>
