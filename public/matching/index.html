@@ -1,14 +1,497 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="styles.css">
-	<title>testtesttest</title>
+    <title>大富豪 ルール設定 & 待合所</title>
+    
+    <style>
+        /* =======================================================
+           全般・統合スタイル
+           ======================================================= */
+        body {
+            /* 背景色: 深い緑 */
+            background-color: #388E3C; 
+            color: #333; 
+            font-family: "Arial", "Hiragino Kaku Gothic ProN", sans-serif;
+            margin: 0;
+            padding: 0;
+            display: block; /* 縦スクロールを有効にする */
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* -------------------- 待合所エリア -------------------- */
+        #waiting-room-wrapper {
+            padding-top: 50px; 
+            padding-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .room {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            width: 320px; /* スマホサイズ固定 */
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            margin-bottom: 30px; 
+        }
+
+        .room h1 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .user-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px 0;
+        }
+
+        .user {
+            display: flex;
+            align-items: center;
+            background: #f7f7f7;
+            border-radius: 8px;
+            padding: 8px 10px;
+            margin-bottom: 10px;
+        }
+
+        .icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #ddd;
+            margin-right: 10px;
+            position: relative;
+        }
+
+        .leader::after {
+            content: "👑"; 
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 18px;
+        }
+
+        .user-name {
+            flex: 1;
+            text-align: left;
+            color: #333;
+        }
+
+        .button-area {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 10px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .start-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .start-btn:hover {
+            background: #45a049;
+        }
+
+        .exit-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .exit-btn:hover {
+            background: #d7382e;
+        }
+
+        /* -------------------- ルール設定エリア -------------------- */
+        #rule-app-container {
+            background-color: rgba(0, 0, 0, 0.1); 
+            padding: 20px;
+            color: #fff;
+            max-width: 400px; 
+            margin: 0 auto;
+        }
+        
+        #rule-app-container h1 {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+            padding-bottom: 10px;
+        }
+
+        #rule-app-container h2 {
+            font-size: 1.3em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: #FFEB3B;
+        }
+
+        /* ルール項目の共通スタイル */
+        .rule-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 10px;
+            margin-bottom: 8px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            list-style: none;
+        }
+
+        .rule-description {
+            flex-grow: 1;
+            margin-right: 15px;
+        }
+
+        .rule-description h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.1em;
+        }
+
+        .rule-description p {
+            margin: 0;
+            font-size: 0.85em;
+            color: #ccc;
+        }
+
+        /* 常にONの固定ルール表示 */
+        .rule-item.fixed {
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .switch-container.fixed-on {
+            padding: 5px 10px;
+            background-color: #2196F3;
+            color: white;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+
+        /* ON/OFFスイッチのデザイン */
+        .rule-item.switchable {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .switch-input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .switch-slider {
+            position: relative;
+            width: 60px;
+            height: 34px;
+            background-color: #ccc; /* OFFの状態 */
+            border-radius: 34px;
+            transition: 0.4s;
+            flex-shrink: 0;
+        }
+
+        .switch-slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            border-radius: 50%;
+            transition: 0.4s;
+        }
+
+        /* ON時のスタイル */
+        .switch-input:checked + .switch-slider {
+            background-color: #4CAF50;
+        }
+
+        .switch-input:checked + .switch-slider:before {
+            transform: translateX(26px);
+        }
+
+        .switch-slider:after {
+            content: "OFF";
+            position: absolute;
+            color: white;
+            font-size: 12px;
+            line-height: 34px;
+            text-align: center;
+            width: 100%;
+            top: 0;
+            left: 0;
+            transition: 0.4s;
+        }
+
+        .switch-input:checked + .switch-slider:after {
+            content: "ON";
+        }
+    </style>
 </head>
 <body>
-  <!-- 頑張って書いてね -->
-	<h1>こんにちは</h1>
-  <script type="module" src="./index.js"></script>
+    <div id="waiting-room-wrapper">
+        <div class="room">
+            <h1>待合所</h1>
+
+            <ul class="user-list">
+                <li class="user">
+                    <div class="icon leader"></div>
+                    <span class="user-name">ユーザー1 (リーダー)</span>
+                </li>
+                <li class="user">
+                    <div class="icon"></div>
+                    <span class="user-name">ユーザー2</span>
+                </li>
+                <li class="user">
+                    <div class="icon"></div>
+                    <span class="user-name">ユーザー3</span>
+                </li>
+                <li class="user">
+                    <div class="icon"></div>
+                    <span class="user-name">ユーザー4</span>
+                </li>
+                <li class="user">
+                    <div class="icon"></div>
+                    <span class="user-name">ユーザー5</span>
+                </li>
+                <li class="user">
+                    <div class="icon"></div>
+                    <span class="user-name">ユーザー6</span>
+                </li>
+            </ul>
+
+            <div class="button-area">
+                <button class="start-btn">ゲーム開始</button>
+                <button class="exit-btn">退出</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="rule-app-container">
+        <h1>大富豪 ローカルルール設定</h1>
+
+        <section class="rule-group fixed-rules">
+            <h2>固定ルール（常にON）</h2>
+            <div class="rule-item fixed">
+                <div class="rule-description">
+                    <h3>8切り</h3>
+                    <p>数字の「8」が出されたら、その場が流れる。（次の人は最初からカードを出せる）。</p>
+                </div>
+                <div class="switch-container fixed-on">ON</div>
+            </div>
+            <div class="rule-item fixed">
+                <div class="rule-description">
+                    <h3>11バック</h3>
+                    <p>数字の「J(11)」が出されたら、その場限りカードの強さが逆転する。</p>
+                </div>
+                <div class="switch-container fixed-on">ON</div>
+            </div>
+            <div class="rule-item fixed">
+                <div class="rule-description">
+                    <h3>革命</h3>
+                    <p>同じ数字のカードを4枚同時に出すと、カードの強さが逆転します。</p>
+                </div>
+                <div class="switch-container fixed-on">ON</div>
+            </div>
+        </section>
+
+        <section class="rule-group optional-rules">
+            <h2>オプションルール（ON/OFF切替可能）</h2>
+
+            <label class="rule-item switchable">
+                <div class="rule-description">
+                    <h3>4止め</h3>
+                    <p>「8」が場に出された後、「4」を場に2枚出すと場が流れる</p>
+                </div>
+                <input type="checkbox" id="rule-4止め" class="switch-input">
+                <span class="switch-slider"></span>
+            </label>
+
+            <label class="rule-item switchable">
+                <div class="rule-description">
+                    <h3>5スキップ</h3>
+                    <p>数字の「5」が出されたとき、出された枚数だけ人がカードを出せずパスになります。</p>
+                </div>
+                <input type="checkbox" id="rule-5すき" class="switch-input">
+                <span class="switch-slider"></span>
+            </label>
+
+            <label class="rule-item switchable">
+                <div class="rule-description">
+                    <h3>7渡し</h3>
+                    <p>数字の「7」が出されたとき、自分の手札から「7」を出した数だけ次の人に渡せる。</p>
+                </div>
+                <input type="checkbox" id="rule-7渡し" class="switch-input">
+                <span class="switch-slider"></span>
+            </label>
+
+            <label class="rule-item switchable">
+                <div class="rule-description">
+                    <h3>9リバース</h3>
+                    <p>数字の「9」が出されたとき、カードを出す順番が逆周りになる。</p>
+                </div>
+                <input type="checkbox" id="rule-9リバース" class="switch-input">
+                <span class="switch-slider"></span>
+            </label>
+
+            <label class="rule-item switchable">
+                <div class="rule-description">
+                    <h3>10捨て</h3>
+                    <p>数字の「10」が出されたら、自分の手札から「10」が出された数だけ場に捨てれる。</p>
+                </div>
+                <input type="checkbox" id="rule-10捨て" class="switch-input">
+                <span class="switch-slider"></span>
+            </label>
+
+            <label class="rule-item switchable">
+                <div class="rule-description">
+                    <h3>大革命</h3>
+                    <p>同じ数字のカードを6枚同時に出すと、カードの強さが逆転し無条件でゲームに勝利する。</p>
+                </div>
+                <input type="checkbox" id="rule-大革命" class="switch-input">
+                <span class="switch-slider"></span>
+            </label>
+
+            <label class="rule-item switchable">
+                <div class="rule-description">
+                    <h3>下剋上</h3>
+                    <p>同じ数字のカードを5枚同時に出すと、ゲームに勝利する。</p>
+                </div>
+                <input type="checkbox" id="rule-下剋上" class="switch-input">
+                <span class="switch-slider"></span>
+            </label>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // ----------------------------------------------------------------
+            // 1. データ定義と状態管理
+            // ----------------------------------------------------------------
+
+            // 常にONで変更できない固定ルール (参照用)
+            const FIXED_RULES = {
+                '8切り': '8切り (エイト・ストップ)',
+                '11バック': '11バック (イレブン・バック)',
+                '革命': '革命'
+            };
+
+            // 変更可能なオプションルールと初期設定 (全て 'false')
+            let optionalRulesState = {
+                '4止め': false,
+                '5すき': false,
+                '7渡し': false,
+                '9リバース': false,
+                '10捨て': false,
+                '大革命': false,
+                '下剋上': false
+            };
+            
+            // ユーザーがリーダーかどうかを判定するフラグ
+            // 画面の「ユーザー1 (リーダー)」に対応
+            const isLeader = true; 
+
+            // ----------------------------------------------------------------
+            // 2. 初期化処理とイベントリスナーの設定
+            // ----------------------------------------------------------------
+
+            const ruleAppContainer = document.getElementById('rule-app-container');
+            const switches = ruleAppContainer.querySelectorAll('.switch-input');
+
+            switches.forEach(switchElement => {
+                const ruleId = switchElement.id.replace('rule-', '');
+
+                // 初期状態を全て 'off' (checked=false) に設定
+                switchElement.checked = false;
+
+                switchElement.addEventListener('change', (event) => {
+                    if (!isLeader) {
+                        // リーダーではない場合、変更をキャンセルし、元の状態に戻す
+                        event.target.checked = !event.target.checked;
+                        alert('ルールを変更できるのは部屋のリーダーのみです。');
+                        return;
+                    }
+
+                    // リーダーの場合、状態を更新
+                    const newRuleId = event.target.id.replace('rule-', '');
+                    const newState = event.target.checked;
+                    
+                    optionalRulesState[newRuleId] = newState;
+
+                    console.log(`ルール "${newRuleId}" が ${newState ? 'ON' : 'OFF'} に変更されました。`);
+                    
+                    // 変更後、サーバーにデータを送信
+                    sendRulesToServer(optionalRulesState);
+                });
+            });
+
+
+            // ----------------------------------------------------------------
+            // 3. サーバーへのデータ送信関数
+            // ----------------------------------------------------------------
+
+            /**
+             * 現在のルール設定をサーバーに送信するダミー関数。
+             * @param {Object} rulesData - 送信するオプションルール設定のオブジェクト
+             * @param {string} format - 送信するデータ形式 ('json' | 'formdata' など)
+             */
+            function sendRulesToServer(rulesData, format = 'json') {
+                const payload = {};
+
+                // ON/OFFの状態を持つルールのみを抽出
+                for (const rule in rulesData) {
+                    if (rulesData.hasOwnProperty(rule)) {
+                         payload[rule] = rulesData[rule]; // 真偽値を送信
+                    }
+                }
+
+                console.log("--- サーバーに送信するデータ ---");
+                console.log(`形式: ${format}`);
+                
+                let dataToSend;
+                
+                if (format === 'json') {
+                    // JSON形式
+                    dataToSend = JSON.stringify({ 
+                        roomId: 'room123', // 例: ルームID
+                        rules: payload 
+                    });
+                    console.log(dataToSend);
+                } else if (format === 'formdata') {
+                    // FormData形式
+                    dataToSend = new FormData();
+                    dataToSend.append('roomId', 'room123');
+                    dataToSend.append('rules', JSON.stringify(payload));
+                    console.log("FormDataのコンテンツ:");
+                    console.log(payload);
+                } else {
+                    console.log(`エラー: 未対応の送信形式 (${format}) です。`);
+                    return;
+                }
+
+                // ここに実際の fetch() や XMLHttpRequest のコードが入ります。
+                console.log("データがサーバーへの送信を試行しました。(デモ)");
+            }
+        });
+    </script>
 </body>
 </html>
