@@ -1,0 +1,27 @@
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+
+  /* 背景色（任意） */
+  background-color: #ffffff;
+}
+
+#area {
+  display: flex;
+
+  /* 垂直方向にも中央寄せ */
+  justify-content: center;
+  /* 水平方向に中央寄せ */
+  align-items: center;
+
+  height: 100vh;
+}
+
+canvas {
+  display: block;
+
+  /* 黒背景をキャンバス側で定義 */
+  background-color: #000;
+}
