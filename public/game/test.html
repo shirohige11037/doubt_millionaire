@@ -1,18 +1,69 @@
 <!DOCTYPE html>
 <html lang="ja">
-
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="test.css">
     <title>CardAnimation</title>
-</head>
+  </head>
 
-<body style="margin:0;overflow: hidden;">
-    <div id="area" style="height:100vh">
-        <!--JavaScript‚ðŽg‚Á‚Ä•`‰æ‚ðs‚¤‚½‚ß‚ÌHTML—v‘f-->
-        <canvas id="gameScene">hello</canvas>
+  <body>
+    <div id="area">
+      <canvas id="gameScene"></canvas>
     </div>
-    <script type="module" src="./anim.js"></script>
-</body>
 
+    <script type="module">
+      //==================================================
+      // ????????HTML?????
+      //==================================================
+      window.canvas = null;
+      window.ctx = null;
+      window.aspect = 1;
+
+      // ?????
+      window.totalCards = 0;
+      window.cardImgs = [];
+      window.cardWidth = 0;
+      window.cardHeight = 0;
+      window.spacing = 0;
+      window.startX = 0;
+      window.startY = 0;
+
+      //==================================================
+      // anim.js ???? import
+      //==================================================
+      import {
+        drawAll,
+        drawBackground,
+        drawCards,
+        initCanvas,
+        initCard,
+        mouseHover,
+        resetStyle,
+        setDispSize,
+      } from "./anim.js";
+
+      //==================================================
+      // ???????????
+      //==================================================
+      window.addEventListener("resize", () => setDispSize(canvas));
+
+      //==================================================
+      // ?????
+      //==================================================
+      window.canvas = document.getElementById("gameScene");
+      window.ctx = canvas.getContext("2d");
+
+      initCanvas(canvas);
+      setDispSize(canvas);
+      initCard();
+
+      resetStyle(ctx);
+      drawBackground(ctx);
+      drawCards(-1, ctx);
+
+      drawAll();
+      mouseHover();
+    </script>
+  </body>
 </html>
