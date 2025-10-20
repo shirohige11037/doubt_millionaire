@@ -4,24 +4,39 @@ body {
   height: 100%;
   overflow: hidden;
 
-  /* ”wŒiFi”CˆÓj */
   background-color: #ffffff;
 }
 
 #area {
   display: flex;
-
-  /* ‚’¼•ûŒü‚É‚à’†‰›Šñ‚¹ */
   justify-content: center;
-  /* …•½•ûŒü‚É’†‰›Šñ‚¹ */
   align-items: center;
-
   height: 100vh;
+
+  position: relative;
 }
 
 canvas {
   display: block;
 
-  /* •”wŒi‚ğƒLƒƒƒ“ƒoƒX‘¤‚Å’è‹` */
   background-color: #000;
+}
+
+#playCardButton {
+  /* ???????????? */
+  position: absolute;
+  z-index: 10; /* Canvas??????? */
+
+  /* ?????? */
+  left: 50%;
+  transform: translateX(-50%);
+
+  /* ?????? */
+  /* Canvas????1000px???????????????780px????????? */
+  top: 780px;
+
+  /* ?????????????? */
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
 }

@@ -10,6 +10,7 @@
   <body>
     <div id="area">
       <canvas id="gameScene"></canvas>
+      <button id="playCardButton" onclick="playSelectedCard()">場に出す</button>
     </div>
 
     <script type="module">
@@ -18,13 +19,20 @@
       //==================================================
       import {
         drawAll,
+        drawBothHand,
         initCanvas,
         initCard,
         mouseClick,
         mouseHover,
+        playSelectedCard,
+        returnPlayedCardCount,
         returnSelectedCardCount,
         setDispSize,
+        setPlayedCard,
       } from "./anim.js";
+
+      //HTMLから直接呼び出せるように
+      window.playSelectedCard = playSelectedCard;
 
       //==================================================
       // 関数
@@ -32,11 +40,11 @@
 
       ///////////////////////////////////////////
 
-      // ソート用データを生成
+      // プレイヤーの手札
       const playerCardData = [];
-      const playerCard = 10;
+      const playerCardCount = 13;
 
-      for (let i = 0; i < playerCard; i++) {
+      for (let i = 0; i < playerCardCount; i++) {
         const SuitRandom = Math.floor(Math.random() * 4) + 1;
         const RankRandom = Math.floor(Math.random() * 10) + 1;
 
@@ -55,6 +63,29 @@
 
       ///////////////////////////////////////////
 
+      //　場に出すカードのデータ構造を定義
+      const playedCardData = [];
+      const playedCardCount = 10;
+
+      for (let i = 0; i < playedCardCount; i++) {
+        const SuitRandom = Math.floor(Math.random() * 4) + 1;
+        const RankRandom = Math.floor(Math.random() * 10) + 1;
+
+        let Suit = "";
+        if (SuitRandom === 1) Suit = "C";
+        else if (SuitRandom === 2) Suit = "D";
+        else if (SuitRandom === 3) Suit = "H";
+        else if (SuitRandom === 4) Suit = "S";
+
+        //tempCards配列にスート、ランク、画像の順で要素を持たせる（構造体のようなもの）
+        playedCardData.push({
+          suit: Suit,
+          rank: RankRandom,
+        });
+      }
+
+      ////////////////////////////////////////////
+
       //引数：手札のスートとランクの配列、手札の位置
       //返り値：選択されたカードの枚数
 
@@ -62,6 +93,15 @@
       initCanvas(300); //カード列が表示される位置（y座標）
       setDispSize();
       initCard(playerCardData); //引数：プレイヤーのカードデータ
+
+      setPlayedCard(playedCardData); //外部から場に出すカードリストを設定し、描画（積み重ね型）
+
+      drawBothHand(
+        window.canvas.width / 2, // X座標: 中央
+        window.canvas.height / 2, // Y座標: 中央
+        30, // 30度回転
+      );
+
       //描画
       drawAll();
 
@@ -70,8 +110,10 @@
       mouseClick();
 
       //返り値
-      let value = returnSelectedCardCount();
-      console.log(value);
+      let selectedCount = returnSelectedCardCount();
+
+      let playedCount = returnPlayedCardCount();
+      console.log("場に出されたカード枚数:", playedCount);
 
       //リサイズ対応
       window.addEventListener("resize", () => setDispSize());
