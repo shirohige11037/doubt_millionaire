@@ -3,120 +3,128 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="test.css">
-    <title>CardAnimation</title>
+    <title>Card Animation Test Scene</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        background-color: #f0f0f0;
+      }
+      #area {
+        position: relative;
+        /* Canvasの固定サイズに合わせて幅と高さを設定 */
+        width: 500px;
+        height: 1000px;
+        border: 1px solid #ccc;
+        overflow: hidden;
+        background-color: #333; /* 背景色の確認用 */
+      }
+      #gameScene {
+        display: block;
+        /* setDispSize() によってサイズが調整されます */
+      }
+      .controls {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+      }
+    </style>
   </head>
-
   <body>
     <div id="area">
       <canvas id="gameScene"></canvas>
-      <button id="playCardButton" onclick="playSelectedCard()">場に出す</button>
+    </div>
+
+    <div class="controls">
+      <button id="p1Play">P1: 場に出す (選択中)</button>
+      <button id="p2Play">P2: 場に出す (2枚/自動循環)</button>
     </div>
 
     <script type="module">
-      //==================================================
-      // anim.js から関数をimport
-      //==================================================
+      // anim.js から必要な関数をインポート
       import {
-        drawAll,
-        drawBothHand,
+        generateCardData,
         initCanvas,
         initCard,
         mouseClick,
         mouseHover,
-        playSelectedCard,
-        returnPlayedCardCount,
-        returnSelectedCardCount,
+        playSelectedCard1,
+        playSelectedCard2,
         setDispSize,
-        setPlayedCard,
       } from "./anim.js";
 
-      //HTMLから直接呼び出せるように
-      window.playSelectedCard = playSelectedCard;
+      // =======================================================
+      // 初期化ロジック
+      // =======================================================
 
-      //==================================================
-      // 関数
-      //==================================================
+      // プレイヤー1の初期手札データ
+      const PLAYER_HAND_DATA = generateCardData(12);
 
-      ///////////////////////////////////////////
+      document.addEventListener("DOMContentLoaded", () => {
+        // 1. ⭐️ Canvasを初期化し、グローバルオブジェクト (window.opponentCardListsなど) を作成
+        //    この呼び出しで 'getContext' エラーと、後続の 'hand2' エラーの両方を回避する準備が整う
+        initCanvas(200);
 
-      // プレイヤーの手札
-      const playerCardData = [];
-      const playerCardCount = 13;
+        // 2. ✅ グローバルオブジェクトが定義された後でデータを設定
 
-      for (let i = 0; i < playerCardCount; i++) {
-        const SuitRandom = Math.floor(Math.random() * 4) + 1;
-        const RankRandom = Math.floor(Math.random() * 10) + 1;
+        // P2の場に出すグループデータ (2枚, 3枚, 1枚を順番に出すシミュレーション)
+        window.playedCardGroups = {
+          p2: [
+            generateCardData(2),
+            generateCardData(3),
+            generateCardData(1),
+          ],
+        };
+        window.playedCardIndex = { p2: 0 };
 
-        let Suit = "";
-        if (SuitRandom === 1) Suit = "C";
-        else if (SuitRandom === 2) Suit = "D";
-        else if (SuitRandom === 3) Suit = "H";
-        else if (SuitRandom === 4) Suit = "S";
+        // P2の手札枚数シミュレーション (window.opponentCardListsがinitCanvasで初期化後に設定)
+        window.opponentCardLists.hand2 = generateCardData(20);
 
-        //tempCards配列にスート、ランク、画像の順で要素を持たせる（構造体のようなもの）
-        playerCardData.push({
-          suit: Suit,
-          rank: RankRandom,
-        });
-      }
+        // 3. その他の初期化処理
 
-      ///////////////////////////////////////////
+        // 描画サイズの初期設定
+        setDispSize();
 
-      //　場に出すカードのデータ構造を定義
-      const playedCardData = [];
-      const playedCardCount = 10;
+        // プレイヤーの手札を初期化
+        initCard(PLAYER_HAND_DATA);
 
-      for (let i = 0; i < playedCardCount; i++) {
-        const SuitRandom = Math.floor(Math.random() * 4) + 1;
-        const RankRandom = Math.floor(Math.random() * 10) + 1;
+        // イベントリスナーの設定
+        mouseHover();
+        mouseClick();
 
-        let Suit = "";
-        if (SuitRandom === 1) Suit = "C";
-        else if (SuitRandom === 2) Suit = "D";
-        else if (SuitRandom === 3) Suit = "H";
-        else if (SuitRandom === 4) Suit = "S";
+        // 初期描画を開始
+        window.animateAndDraw();
 
-        //tempCards配列にスート、ランク、画像の順で要素を持たせる（構造体のようなもの）
-        playedCardData.push({
-          suit: Suit,
-          rank: RankRandom,
-        });
-      }
+        // =======================================================
+        // UI イベントリスナーの設定
+        // =======================================================
 
-      ////////////////////////////////////////////
+        document.getElementById("p1Play").addEventListener(
+          "click",
+          () => {
+            playSelectedCard1();
+          },
+        );
 
-      //引数：手札のスートとランクの配列、手札の位置
-      //返り値：選択されたカードの枚数
+        document.getElementById("p2Play").addEventListener(
+          "click",
+          () => {
+            // playSelectedCard2 は内部で window.playedCardGroups を参照する
+            playSelectedCard2();
+          },
+        );
 
-      //初期セットアップ
-      initCanvas(300); //カード列が表示される位置（y座標）
-      setDispSize();
-      initCard(playerCardData); //引数：プレイヤーのカードデータ
-
-      setPlayedCard(playedCardData); //外部から場に出すカードリストを設定し、描画（積み重ね型）
-
-      drawBothHand(
-        window.canvas.width / 2, // X座標: 中央
-        window.canvas.height / 2, // Y座標: 中央
-        30, // 30度回転
-      );
-
-      //描画
-      drawAll();
-
-      //マウスイベント
-      mouseHover();
-      mouseClick();
-
-      //返り値
-      let selectedCount = returnSelectedCardCount();
-
-      let playedCount = returnPlayedCardCount();
-      console.log("場に出されたカード枚数:", playedCount);
-
-      //リサイズ対応
-      window.addEventListener("resize", () => setDispSize());
+        // ウィンドウサイズ変更時にCanvasサイズを調整
+        window.addEventListener("resize", setDispSize);
+      });
     </script>
   </body>
 </html>
