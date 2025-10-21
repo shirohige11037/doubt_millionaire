@@ -1,4 +1,136 @@
+/*
 body {
   text-align: center;
   background: rgb(100, 200, 80);
+}
+*/
+/* 全体のリセットとフォント */
+body {
+  font-family: "Arial", sans-serif;
+  background-color: #388e3c; /* ゲームらしい緑の背景 */
+  color: #fff;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+#game-container {
+  width: 90%;
+  max-width: 1200px;
+  background-color: #212121;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Flexbox/Grid を利用したレイアウト */
+#game-container {
+  display: grid;
+  /* エリアの配置:  上部に相手、中央に場、下部に自分と操作 */
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto 1fr auto auto;
+  gap: 20px;
+}
+
+#status-area, #controls-area {
+  text-align: center;
+}
+
+/* 他プレイヤー情報 */
+#opponents-area {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  border-bottom: 1px solid #444;
+}
+
+.opponent {
+  background-color: #333;
+  padding: 10px;
+  border-radius: 5px;
+  width: 30%;
+  text-align: center;
+}
+
+/* 場札エリア */
+#field-area {
+  text-align: center;
+  padding: 30px;
+  border: 2px dashed #666;
+  border-radius: 10px;
+}
+
+#current-play p {
+  font-size: 1.8em;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+/* 手札エリア */
+#hand-area {
+  padding-top: 20px;
+  border-top: 1px solid #444;
+}
+
+#your-cards {
+  display: flex;
+  justify-content: center;
+  gap: -20px; /* カードを重ねて表示 */
+  overflow-x: auto;
+  padding: 10px 0;
+}
+
+/* カードのスタイル */
+.card {
+  width: 60px;
+  height: 90px;
+  background-color: #fff;
+  border: 1px solid #000;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.1s;
+  user-select: none;
+  color: #000; /* デフォルトは黒文字 */
+}
+
+/* 赤いスート（♥, ♦）は赤文字にする */
+.card[data-suit="heart"], .card[data-suit="diamond"] {
+  color: #f44336;
+}
+
+/* 選択されたカード */
+.card.selected {
+  transform: translateY(-20px); /* 少し持ち上げて選択状態を示す */
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  border: 3px solid #ffeb3b; /* 選択されたことを強調 */
+}
+
+/* 操作ボタン */
+#controls-area button, #declared-rank {
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+#play-button {
+  background-color: #4caf50;
+  color: white;
+}
+
+#doubt-button {
+  background-color: #f44336;
+  color: white;
+}
+
+#play-button:disabled {
+  background-color: #666;
+  cursor: not-allowed;
 }

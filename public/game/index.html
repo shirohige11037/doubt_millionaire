@@ -4,11 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
-    <title>ガメ</title>
+    <title>game</title>
   </head>
   <body>
-    <!-- 頑張って書いてね -->
-    <h1>Hello</h1>
+    <div id="game-container">
+      <div id="status-area">
+        <p id="current-turn-info">現在のターン: あなた</p>
+        <p id="message-display">カードを出してください。</p>
+      </div>
+
+      <div id="opponents-area">
+        <div class="opponent" id="opponent-1">
+          <p>プレイヤー2</p>
+          <div class="opponent-cards">手札: 10枚</div>
+        </div>
+        <div class="opponent" id="opponent-2">
+          <p>プレイヤー3</p>
+          <div class="opponent-cards">手札: 13枚</div>
+        </div>
+        <div class="opponent" id="opponent-1">
+          <p>プレイヤー4</p>
+          <div class="opponent-cards">手札: 10枚</div>
+        </div>
+        <div class="opponent" id="opponent-2">
+          <p>プレイヤー5</p>
+          <div class="opponent-cards">手札: 13枚</div>
+        </div>
+        <div class="opponent" id="opponent-1">
+          <p>プレイヤー6</p>
+          <div class="opponent-cards">手札: 10枚</div>
+        </div>
+      </div>
+
+      <div id="field-area">
+        <h2>場札</h2>
+        <div id="current-play">
+          <p>宣言: 6が2枚</p>
+        </div>
+        <div id="pile-count">（山札に積まれた枚数: 10枚）</div>
+      </div>
+
+      <div id="hand-area">
+        <h2>あなたの手札</h2>
+        <div id="your-cards">
+          <div class="card selected" data-suit="spade" data-rank="A">♠A</div>
+          <div class="card" data-suit="heart" data-rank="3">♥3</div>
+          <div class="card" data-suit="diamond" data-rank="8">♦8</div>
+        </div>
+      </div>
+
+      <div id="controls-area">
+        <select id="declared-rank">
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+        <button id="play-button" disabled>カードを出す</button>
+        <button id="pass-button">パス</button>
+        <button id="doubt-button">ダウト！</button>
+      </div>
+    </div>
     <script type="module" src="./index.js"></script>
   </body>
 </html>

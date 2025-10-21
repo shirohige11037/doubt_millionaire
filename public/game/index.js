@@ -72,12 +72,6 @@ function handleIncomingMessage(message) {
         message.payload,
       );
       break;
-    case "play":
-      console.log("🃏 PLAYメッセージを受信 - プレイ情報:", message.payload);
-      break;
-    case "pass":
-      console.log("🚫 PASSメッセージを受信 - パス情報:", message.payload);
-      break;
     case "play": // 他のプレイヤーのカード出し/申告情報
       console.log("🃏 PLAYメッセージを受信 - プレイ情報:", message.payload);
       // 例: UIに申告内容（どの数字を何枚）を表示
@@ -85,6 +79,9 @@ function handleIncomingMessage(message) {
       console.log(
         `${playerId} が ${declaredRank} を ${declaredCount} 枚と申告しました。`,
       );
+      break;
+    case "pass":
+      console.log("🚫 PASSメッセージを受信 - パス情報:", message.payload);
       break;
     case "result": // ダウトの成否、ペナルティ、ゲーム結果などの情報
       console.log(
