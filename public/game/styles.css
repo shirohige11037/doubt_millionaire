@@ -1,136 +1,280 @@
-/*
 body {
-  text-align: center;
-  background: rgb(100, 200, 80);
-}
-*/
-/* 全体のリセットとフォント */
-body {
-  font-family: "Arial", sans-serif;
-  background-color: #388e3c; /* ゲームらしい緑の背景 */
-  color: #fff;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
-  padding: 20px;
-  display: flex;
-  justify-content: center;
-}
-
-#game-container {
-  width: 90%;
-  max-width: 1200px;
-  background-color: #212121;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-}
-
-/* Flexbox/Grid を利用したレイアウト */
-#game-container {
-  display: grid;
-  /* エリアの配置:  上部に相手、中央に場、下部に自分と操作 */
-  grid-template-columns: 1fr;
-  grid-template-rows: auto auto 1fr auto auto;
-  gap: 20px;
-}
-
-#status-area, #controls-area {
-  text-align: center;
-}
-
-/* 他プレイヤー情報 */
-#opponents-area {
-  display: flex;
-  justify-content: space-around;
-  padding: 10px 0;
-  border-bottom: 1px solid #444;
-}
-
-.opponent {
-  background-color: #333;
-  padding: 10px;
-  border-radius: 5px;
-  width: 30%;
-  text-align: center;
-}
-
-/* 場札エリア */
-#field-area {
-  text-align: center;
-  padding: 30px;
-  border: 2px dashed #666;
-  border-radius: 10px;
-}
-
-#current-play p {
-  font-size: 1.8em;
-  font-weight: bold;
-  margin: 10px 0;
-}
-
-/* 手札エリア */
-#hand-area {
-  padding-top: 20px;
-  border-top: 1px solid #444;
-}
-
-#your-cards {
-  display: flex;
-  justify-content: center;
-  gap: -20px; /* カードを重ねて表示 */
-  overflow-x: auto;
-  padding: 10px 0;
-}
-
-/* カードのスタイル */
-.card {
-  width: 60px;
-  height: 90px;
-  background-color: #fff;
-  border: 1px solid #000;
-  border-radius: 5px;
+  padding: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.2em;
+  background-color: #2c3e50;
+  color: white;
+  height: 100vh;
+}
+
+#game-container {
+  width: 100%;
+  max-width: 300px; /* スマホ縦画面を想定 */
+  height: 100vh;
+  position: relative;
+  background-color: #34495e;
+  overflow: hidden;
+}
+
+/* ------------------- ターン表示 ------------------- */
+#turn-indicator {
+  padding: 10px;
+  background-color: #e67e22;
+  text-align: center;
+  font-size: 1.1em;
   font-weight: bold;
+}
+
+/* ------------------- 相手プレイヤー ------------------- */
+
+/* 全体のコンテナ: 高さを抑えて場にスペースを空ける */
+#opponents-area {
+  position: absolute;
+  top: 65px;
+  left: 0;
+  width: 100%;
+  height: 40%; /* P1〜P5の配置エリアの高さ */
+
+  display: flex; /* Flexコンテナにする */
+  justify-content: space-between; /* 左右のカラムを両端に寄せる */
+  align-items: flex-start; /* 要素を上揃えにする */
+}
+
+/* 左右のカラム (P2/P4 および P3/P5) */
+.side-column {
+  width: 25%; /* 左右の幅 */
+  height: 100%;
+  display: flex;
+  flex-direction: column; /* 縦に並べる */
+  justify-content: space-between; /* P2とP4、P3とP5を上下に離す */
+  padding: 20px 0; /* 上下のマージン */
+  box-sizing: border-box;
+  align-items: center;
+}
+
+/* 中央のカラム (P1のみ) */
+.center-column {
+  width: 50%;
+  /* 💥 修正点: P1要素を中央に配置する 💥 */
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
+}
+
+/* P1 (中央上部) */
+.player-info.top-center {
+  position: static; /* Flexbox配置のためabsoluteを解除 */
+  transform: none;
+}
+
+/* 左右のplayer-info (Flexbox配置のためabsoluteを解除) */
+.player-info {
+  position: relative; /* 👈 ここを追加しました */
+  margin: 0;
+  text-align: center;
+}
+
+/* 手札枚数バッジは、player-infoに対して絶対配置を維持 */
+.player-info {
+  position: relative;
+  /* 💥 修正点: 幅を内容物に合わせることで、バッジの基準点をアバター付近に限定 💥 */
+  width: fit-content;
+  margin: 0 auto; /* P1を中央寄せにするために必要 */
+  text-align: center;
+}
+
+/* --- プレイヤー要素の詳細スタイル --- */
+.avatar {
+  width: 40px;
+  height: 40px;
+  background-color: #95a5a6;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0 auto;
+  border: 3px solid transparent;
+}
+
+.name {
+  font-size: 0.7em;
+  margin-top: 2px;
+}
+
+/* 手札枚数バッジ */
+.card-count {
+  position: absolute;
+  top: -5px;
+  right: 5px; /* アバターの右上に配置 */
+  min-width: 20px;
+  height: 20px;
+  line-height: 20px;
+  background-color: #ecf0f1;
+  color: #34495e;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 0 4px;
+}
+
+/* 警告色 */
+.card-count.warning {
+  background-color: #f1c40f;
+  color: #34495e;
+}
+.card-count.danger {
+  background-color: #e74c3c;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* 今誰のターンか強調 */
+.player-info.is-turn .avatar {
+  border-color: #3498db;
+  box-shadow: 0 0 8px #3498db;
+}
+
+/* ------------------- 場と宣言エリア ------------------- */
+#playing-field {
+  /* 💥 修正点: 相手エリアの下に配置 💥 */
+  position: absolute;
+  top: 27.5%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 45%;
+  padding: 10px;
+  background-color: #2c3e50;
+  border-radius: 8px;
+  text-align: center;
+  z-index: 5;
+}
+
+#field-info {
+  margin-bottom: 10px;
+  border-bottom: 1px dashed #7f8c8d;
+  padding-bottom: 5px;
+}
+
+#declared-number, #declared-count {
+  font-weight: bold;
+  color: #f39c12;
+}
+
+/* ------------------- 自分の手札 ------------------- */
+#player-hand-area {
+  position: absolute;
+  bottom: 120px;
+  width: 100%;
+  padding: 5px 10px;
+  background-color: #293a4a;
+  box-sizing: border-box;
+}
+
+#my-hand {
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  padding: 5px 0;
+}
+
+.card {
+  width: 40px;
+  height: 60px;
+  background-color: white;
+  color: black;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  margin: 0 3px;
   cursor: pointer;
-  transition: transform 0.1s;
-  user-select: none;
-  color: #000; /* デフォルトは黒文字 */
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+  transition: transform 0.1s, box-shadow 0.1s;
 }
 
-/* 赤いスート（♥, ♦）は赤文字にする */
-.card[data-suit="heart"], .card[data-suit="diamond"] {
-  color: #f44336;
-}
-
-/* 選択されたカード */
 .card.selected {
-  transform: translateY(-20px); /* 少し持ち上げて選択状態を示す */
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-  border: 3px solid #ffeb3b; /* 選択されたことを強調 */
+  transform: translateY(-10px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+  border: 2px solid #3498db;
 }
 
-/* 操作ボタン */
-#controls-area button, #declared-rank {
-  padding: 10px 20px;
-  margin: 5px;
-  border-radius: 5px;
-  cursor: pointer;
+/* ------------------- 操作パネル ------------------- */
+#control-panel {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 120px;
+  background-color: #2c3e50;
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#declaration-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#declare-num, #selected-count {
+  padding: 5px;
+  border-radius: 4px;
   font-size: 1em;
 }
 
-#play-button {
-  background-color: #4caf50;
+#declare-num {
+  background-color: white;
+  color: #333;
+  border: none;
+}
+
+#selected-count {
+  background-color: #3498db;
+}
+
+#action-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+#action-buttons button {
+  padding: 10px 15px;
+  font-size: 0.8em;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
   color: white;
+  transition: background-color 0.2s;
+}
+
+#play-button {
+  background-color: #27ae60;
+}
+#play-button:hover {
+  background-color: #2ecc71;
+}
+
+#pass-button {
+  background-color: #f39c12;
+}
+#pass-button:hover {
+  background-color: #f1c40f;
 }
 
 #doubt-button {
-  background-color: #f44336;
-  color: white;
+  background-color: #c0392b;
 }
-
-#play-button:disabled {
-  background-color: #666;
-  cursor: not-allowed;
+#doubt-button:hover {
+  background-color: #e74c3c;
 }

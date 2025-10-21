@@ -8,59 +8,90 @@
   </head>
   <body>
     <div id="game-container">
-      <div id="status-area">
-        <p id="current-turn-info">現在のターン: あなた</p>
-        <p id="message-display">カードを出してください。</p>
+      <div id="turn-indicator">
+        <span id="current-turn-player">あなた</span> のターンです
       </div>
 
       <div id="opponents-area">
-        <div class="opponent" id="opponent-1">
-          <p>プレイヤー2</p>
-          <div class="opponent-cards">手札: 10枚</div>
+        <div class="side-column left-column">
+          <div class="player-info" id="p2" data-name="ハルト">
+            <div class="avatar">H</div>
+            <div class="name">ハルト</div>
+            <div class="card-count" data-cards="10">10</div>
+          </div>
+          <div class="player-info" id="p4" data-name="ミサキ">
+            <div class="avatar">M</div>
+            <div class="name">ミサキ</div>
+            <div class="card-count" data-cards="10">10</div>
+          </div>
         </div>
-        <div class="opponent" id="opponent-2">
-          <p>プレイヤー3</p>
-          <div class="opponent-cards">手札: 13枚</div>
+
+        <div class="center-column">
+          <div class="player-info" id="p1" data-name="アオイ">
+            <div class="avatar">A</div>
+            <div class="name">アオイ</div>
+            <div class="card-count" data-cards="9">9</div>
+          </div>
         </div>
-        <div class="opponent" id="opponent-1">
-          <p>プレイヤー4</p>
-          <div class="opponent-cards">手札: 10枚</div>
-        </div>
-        <div class="opponent" id="opponent-2">
-          <p>プレイヤー5</p>
-          <div class="opponent-cards">手札: 13枚</div>
-        </div>
-        <div class="opponent" id="opponent-1">
-          <p>プレイヤー6</p>
-          <div class="opponent-cards">手札: 10枚</div>
+
+        <div class="side-column right-column">
+          <div class="player-info" id="p3" data-name="ユウタ">
+            <div class="avatar">Y</div>
+            <div class="name">ユウタ</div>
+            <div class="card-count" data-cards="10">10</div>
+          </div>
+          <div class="player-info" id="p5" data-name="サトシ">
+            <div class="avatar">S</div>
+            <div class="name">サトシ</div>
+            <div class="card-count" data-cards="10">10</div>
+          </div>
         </div>
       </div>
 
-      <div id="field-area">
-        <h2>場札</h2>
-        <div id="current-play">
-          <p>宣言: 6が2枚</p>
-        </div>
-        <div id="pile-count">（山札に積まれた枚数: 10枚）</div>
-      </div>
-
-      <div id="hand-area">
-        <h2>あなたの手札</h2>
-        <div id="your-cards">
-          <div class="card selected" data-suit="spade" data-rank="A">♠A</div>
-          <div class="card" data-suit="heart" data-rank="3">♥3</div>
-          <div class="card" data-suit="diamond" data-rank="8">♦8</div>
+      <div id="playing-field">
+        <h3>場の情報</h3>
+        <div id="field-info">
+          <!--<p>現在の宣言: <span id="declared-number">なし</span></p>
+                <p>枚数: <span id="declared-count">0</span>枚</p>-->
         </div>
       </div>
 
-      <div id="controls-area">
-        <select id="declared-rank">
-          <option value="4">4</option>
-          <option value="5">5</option>
-        </select>
-        <button id="play-button" disabled>カードを出す</button>
-        <button id="pass-button">パス</button>
-        <button id="doubt-button">ダウト！</button>
+      <div id="player-hand-area">
+        <div id="my-hand">
+          <div class="card" data-card="S3">♠3</div>
+          <div class="card" data-card="H5">♥5</div>
+          <div class="card" data-card="D5">♦5</div>
+          <div class="card" data-card="C5">♣5</div>
+          <div class="card" data-card="SK">♠K</div>
+        </div>
+      </div>
+      <div id="control-panel">
+        <div id="declaration-area">
+          <label for="declare-num">数字選択:</label>
+          <select id="declare-num">
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="J">J</option>
+            <option value="Q">Q</option>
+            <option value="K">K</option>
+            <option value="A">A</option>
+            <option value="2">2</option>
+          </select>
+          <span id="selected-count">選択: 枚</span>
+        </div>
+        <div id="action-buttons">
+          <button id="play-button" onclick="playCards()">
+            場に出す
+          </button>
+          <button id="pass-button" onclick="passTurn()">パス</button>
+          <button id="doubt-button" onclick="callDoubt()">ダウト！</button>
+        </div>
       </div>
     </div>
     <script type="module" src="./index.js"></script>
