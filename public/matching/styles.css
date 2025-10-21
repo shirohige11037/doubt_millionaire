@@ -1,0 +1,238 @@
+/* =======================================================
+    全般・統合スタイル
+    ======================================================= */
+body {
+    /* 背景色: 深い緑 */
+    background-color: #388E3C; 
+    color: #333; 
+    font-family: "Arial", "Hiragino Kaku Gothic ProN", sans-serif;
+    margin: 0;
+    padding: 0;
+    display: block; /* 縦スクロールを有効にする */
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+/* -------------------- 待合所エリア -------------------- */
+#waiting-room-wrapper {
+    padding-top: 50px; 
+    padding-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.room {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    width: 320px; /* スマホサイズ固定 */
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    margin-bottom: 30px; 
+}
+
+.room h1 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.user-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+}
+
+.user {
+    display: flex;
+    align-items: center;
+    background: #f7f7f7;
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+}
+
+.icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #ddd;
+    margin-right: 10px;
+    position: relative;
+}
+
+.leader::after {
+    content: "👑"; 
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 18px;
+}
+
+.user-name {
+    flex: 1;
+    text-align: left;
+    color: #333;
+}
+
+.button-area {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+button {
+    flex: 1;
+    padding: 10px;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.start-btn {
+    background: #4CAF50;
+    color: white;
+}
+
+.start-btn:hover {
+    background: #45a049;
+}
+
+.exit-btn {
+    background: #f44336;
+    color: white;
+}
+
+.exit-btn:hover {
+    background: #d7382e;
+}
+
+/* -------------------- ルール設定エリア -------------------- */
+#rule-app-container {
+    background-color: rgba(0, 0, 0, 0.1); 
+    padding: 20px;
+    color: #fff;
+    max-width: 400px; 
+    margin: 0 auto;
+}
+
+#rule-app-container h1 {
+    color: #fff;
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+    padding-bottom: 10px;
+}
+
+#rule-app-container h2 {
+    font-size: 1.3em;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    color: #FFEB3B;
+}
+
+/* ルール項目の共通スタイル */
+.rule-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 10px;
+    margin-bottom: 8px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    list-style: none;
+}
+
+.rule-description {
+    flex-grow: 1;
+    margin-right: 15px;
+}
+
+.rule-description h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.1em;
+}
+
+.rule-description p {
+    margin: 0;
+    font-size: 0.85em;
+    color: #ccc;
+}
+
+/* 常にONの固定ルール表示 */
+.rule-item.fixed {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.switch-container.fixed-on {
+    padding: 5px 10px;
+    background-color: #2196F3;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+/* ON/OFFスイッチのデザイン */
+.rule-item.switchable {
+    cursor: pointer;
+    position: relative;
+}
+
+.switch-input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch-slider {
+    position: relative;
+    width: 60px;
+    height: 34px;
+    background-color: #ccc; /* OFFの状態 */
+    border-radius: 34px;
+    transition: 0.4s;
+    flex-shrink: 0;
+}
+
+.switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.4s;
+}
+
+/* ON時のスタイル */
+.switch-input:checked + .switch-slider {
+    background-color: #4CAF50;
+}
+
+.switch-input:checked + .switch-slider:before {
+    transform: translateX(26px);
+}
+
+.switch-slider:after {
+    content: "OFF";
+    position: absolute;
+    color: white;
+    font-size: 12px;
+    line-height: 34px;
+    text-align: center;
+    width: 100%;
+    top: 0;
+    left: 0;
+    transition: 0.4s;
+}
+
+.switch-input:checked + .switch-slider:after {
+    content: "ON";
+}

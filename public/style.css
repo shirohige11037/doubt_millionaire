@@ -1,11 +1,16 @@
 /* style.css */
 body {
-  font-family: "Arial", sans-serif;
-  background-color: #0abd4e;
+  background-image: url("images/background.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover; /* contain も候補 */
+  background-attachment: scroll;
+  background-color: #81c981;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  margin: 0;
 }
 
 form {
