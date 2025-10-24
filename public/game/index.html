@@ -14,12 +14,12 @@
 
       <div id="opponents-area">
         <div class="side-column left-column">
-          <div class="player-info" id="p2" data-name="ハルト">
+          <div class="player-info" id="p1" data-name="ハルト">
             <div class="avatar">H</div>
             <div class="name">ハルト</div>
             <div class="card-count" data-cards="10">10</div>
           </div>
-          <div class="player-info" id="p4" data-name="ミサキ">
+          <div class="player-info" id="p2" data-name="ミサキ">
             <div class="avatar">M</div>
             <div class="name">ミサキ</div>
             <div class="card-count" data-cards="10">10</div>
@@ -27,7 +27,7 @@
         </div>
 
         <div class="center-column">
-          <div class="player-info" id="p1" data-name="アオイ">
+          <div class="player-info" id="p3" data-name="アオイ">
             <div class="avatar">A</div>
             <div class="name">アオイ</div>
             <div class="card-count" data-cards="9">9</div>
@@ -35,7 +35,7 @@
         </div>
 
         <div class="side-column right-column">
-          <div class="player-info" id="p3" data-name="ユウタ">
+          <div class="player-info" id="p4" data-name="ユウタ">
             <div class="avatar">Y</div>
             <div class="name">ユウタ</div>
             <div class="card-count" data-cards="10">10</div>
@@ -86,14 +86,35 @@
           <span id="selected-count">選択: 枚</span>
         </div>
         <div id="action-buttons">
-          <button id="play-button" onclick="playCards()">
+          <button id="play-button">
             場に出す
           </button>
-          <button id="pass-button" onclick="passTurn()">パス</button>
-          <button id="doubt-button" onclick="callDoubt()">ダウト！</button>
+          <button id="pass-button">パス</button>
+          <button id="doubt-button">ダウト！</button>
         </div>
       </div>
     </div>
-    <script type="module" src="./index.js"></script>
+    <script type="module" src="./index.js">
+      document.getElementById("play-button").addEventListener(
+        "click",
+        () => {
+          sendPlay(playerId, actualCards, declaredRank, declaredCount);
+        },
+      );
+
+      document.getElementById("pass-button").addEventListener(
+        "click",
+        () => {
+          sendPass(playerId);
+        },
+      );
+
+      document.getElementById("doubt-button").addEventListener(
+        "click",
+        () => {
+          sendChallenge(challengerId);
+        },
+      );
+    </script>
   </body>
 </html>

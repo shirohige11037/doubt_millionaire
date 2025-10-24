@@ -12,7 +12,7 @@ body {
 
 #game-container {
   width: 100%;
-  max-width: 300px; /* スマホ縦画面を想定 */
+  max-width: 320px; /* スマホ縦画面を想定 */
   height: 100vh;
   position: relative;
   background-color: #34495e;
@@ -49,7 +49,7 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column; /* 縦に並べる */
-  justify-content: space-between; /* P2とP4、P3とP5を上下に離す */
+  justify-content: space-between;
   padding: 20px 0; /* 上下のマージン */
   box-sizing: border-box;
   align-items: center;
@@ -123,7 +123,7 @@ body {
 }
 
 /* 警告色 */
-.card-count.warning {
+/*.card-count.warning {
   background-color: #f1c40f;
   color: #34495e;
 }
@@ -131,7 +131,7 @@ body {
   background-color: #e74c3c;
   color: white;
   transform: scale(1.1);
-}
+}*/
 
 /* 今誰のターンか強調 */
 .player-info.is-turn .avatar {
