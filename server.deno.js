@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
       }
       answer = username + "-" + i.toString() + "-";
     }
-    return new Response(username);
+    return new Response(answer);
   }
 
   if (pathname === "/ws/game") {
