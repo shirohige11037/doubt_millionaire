@@ -50,7 +50,7 @@ Deno.serve(async (req) => {
     const username = params.get("name");
     let answer = username;
     for (let i = 0;; i++) {
-      if ((await kv.get(["username", answer])).value === undefined) {
+      if ((await kv.get(["username", answer])).value === null) {
         await kv.set(["username", answer]);
         break;
       }
