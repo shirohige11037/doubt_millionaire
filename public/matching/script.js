@@ -2,9 +2,9 @@
 let SERVER_URL;
 
 if (window.location.protocol === "https:") {
-  SERVER_URL = `wss://${location.host}/ws/game`;
+  SERVER_URL = `wss://${location.host}/ws/matching`;
 } else {
-  SERVER_URL = `ws://${location.host}/ws/game`;
+  SERVER_URL = `ws://${location.host}/ws/matching`;
 }
 
 // 最大プレイ人数を設定
