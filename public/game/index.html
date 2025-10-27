@@ -5,50 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet">
     <!--href="styles.css"-->
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #447244;
+      }
+      #game-container {
+        width: 100%;
+        max-width: 320px; /* スマホ縦画面を想定 */
+        height: 85vh;
+        position: relative;
+        background-color: #388E3C;
+        overflow: hidden;
+      }
+      #action-buttons {
+        display: flex;
+        gap: 15px;
+      }
+      #action-buttons button {
+        padding: 10px 15px;
+        font-size: 0.8em;
+        font-weight: bold;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        color: white;
+        transition: background-color 0.2s;
+      }
+      #play-button {
+        background-color: #27ae60;
+      }
+      #play-button:hover {
+        background-color: #2ecc71;
+      }
+      #pass-button {
+        background-color: #f39c12;
+      }
+      
+      #pass-button:hover {
+        background-color: #f1c40f;
+      }
+
+      #doubt-button {
+          background-color: #c0392b;
+      }
+      #doubt-button:hover {
+          background-color: #e74c3c;
+      }
+
+    </style>
     <title>game</title>
   </head>
   <body>
     <div id="game-container">
       <div id="turn-indicator">
-        <span id="current-turn-player">あなた</span> のターンです
+        <span id="current-turn-player"></span> のターンです
       </div>
       
       <div id="timer-display"></div>
 
       <div id="opponents-area">
-        <div class="side-column left-column">
-          <div class="player-info" id="p1" data-name="あ">
-            <div class="avatar">A</div>
-            <div class="name">あ</div>
-            <div class="card-count" data-cards="7">7</div>
+          <div class="player-info" id="p1" data-name="">
+            <div class="avatar"></div>
+            <div class="name"></div>
+            <div class="card-count" data-cards=""></div>
           </div>
-          <div class="player-info" id="p2" data-name="い">
-            <div class="avatar">B</div>
-            <div class="name">い</div>
-            <div class="card-count" data-cards="8">8</div>
+          <div class="player-info" id="p2" data-name="">
+            <div class="avatar"></div>
+            <div class="name"></div>
+            <div class="card-count" data-cards=""></div>
           </div>
-        </div>
-
-        <div class="center-column">
-          <div class="player-info" id="p3" data-name="う">
-            <div class="avatar">C</div>
-            <div class="name">う</div>
-            <div class="card-count" data-cards="9">9</div>
+          <div class="player-info" id="p3" data-name="">
+            <div class="avatar"></div>
+            <div class="name"></div>
+            <div class="card-count" data-cards=""></div>
           </div>
-        </div>
-
-        <div class="side-column right-column">
-          <div class="player-info" id="p4" data-name="え">
-            <div class="avatar">D</div>
-            <div class="name">え</div>
-            <div class="card-count" data-cards="10">10</div>
+          <div class="player-info" id="p4" data-name="">
+            <div class="avatar"></div>
+            <div class="name"></div>
+            <div class="card-count" data-cards=""></div>
           </div>
-          <div class="player-info" id="p5" data-name="お">
-            <div class="avatar">E</div>
-            <div class="name">お</div>
-            <div class="card-count" data-cards="11">11</div>
+          <div class="player-info" id="p5" data-name="">
+            <div class="avatar"></div>
+            <div class="name"></div>
+            <div class="card-count" data-cards=""></div>
           </div>
-        </div>
       </div>
 
       <div id="playing-field">
@@ -87,7 +133,7 @@
             <option value="102">2</option>
             <option value="200" id="joker-id">JOKER</option>
           </select>
-          <span id="selected-count">選択:枚</span>
+          <span id="selected-count">選択:0枚</span>
         </div>
         <div id="action-buttons">
           <button id="play-button">

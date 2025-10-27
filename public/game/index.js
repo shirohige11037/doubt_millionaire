@@ -1,17 +1,41 @@
+const params = new URLSearchParams(window.location.search);
+
+const roomname = params.get("room");
+const username = params.get("name");
+const userid = params.get("id");
 // 接続するWebSocketサーバーのURL
 const WS_URL = "ws://localhost:8080/game";
 const TURN_LIMIT = 60; // ターンの制限時間 (秒)
 const DOUBT_LIMIT = 5; // ダウトタイムの制限時間 (秒)
 
 let back = 0;
-let declaredCount = 1;
+let declaredRank = 0;
+let declaredCount = 0;
+let actualCards = [];
 let currentTimer = null; // タイマーIDを保持
 let timeLeft = 0; // 残り時間 (秒)
 let currentPhase = null; // 現在のフェーズ ('turn' または 'doubt')
 
+let myHand = []; // 自分の手札 (カードオブジェクトの配列)
+let allPlayers = []; // 全プレイヤーの情報 (名前、ID、手札枚数)
+let turnOrder = []; // プレイヤーの順番 (IDの配列)
+let gameRules = {}; // ゲームルール設定
+
 const timerDisplay = document.getElementById("timer-display");
 
 let socket;
+
+import {
+  generateCardData,
+  initCanvas,
+  initCard,
+  mouseClick,
+  mouseHover,
+  playSelectedCard1,
+  playSelectedCard2,
+  setDispSize,
+  startDoubtEffect,
+} from "./anim.js";
 
 // ----------------------------------------------------
 // 1. WebSocket接続の確立
@@ -139,21 +163,16 @@ function handleTimeOut() {
 function handleIncomingMessage(message) {
   switch (message.type) {
     case "init": // 👈 受信専用として残す
-      console.log(
-        "✨ INITメッセージを受信 - ゲームの初期情報:",
-        message.payload,
-      );
+      console.log("init");
       // 例: 手札の表示、ルールの設定など
-      const { hand, rules, playerOrder } = message.payload;
-      console.log("手札:", hand);
-      console.log("ルール:", rules);
+      myHand = message.hand; //自分の手札
+      gameRules = message.rules; //ゲームのルール
+      turnOrder = message.order; //全員の順番
+      allPlayers = message.allplayers; //全員の名前、id、手札枚数
       break;
     case "turn":
-      console.log(
-        "🎲 TURNメッセージを受信 - 現在のターン情報:",
-        message.payload,
-      );
-      if (message.is_my_turn) {
+      console.log("phase:turn");
+      if (message.turn == "you") {
         // 自分のターンならタイマーを開始
         startTimer(TURN_LIMIT, "turn");
         console.log("あなたのターンです。タイマー開始。");
@@ -162,9 +181,10 @@ function handleIncomingMessage(message) {
         stopTimer();
       }
       break;
-    case "doubt_start":
+    case "doubt":
       // サーバーから「ダウトタイムの開始」が通知された
-      if (message.is_my_turn) {
+      console.log("phase:daubt");
+      if (message.doubt == "you") {
         // ダウトするかどうかを判断するプレイヤーならタイマーを開始
         startTimer(DOUBT_LIMIT, "doubt");
         console.log("ダウトタイム開始。タイマー開始。");
@@ -182,7 +202,7 @@ function handleIncomingMessage(message) {
     case "play": // 他のプレイヤーのカード出し/申告情報
       console.log("🃏 PLAYメッセージを受信 - プレイ情報:", message.payload);
       // 例: UIに申告内容（どの数字を何枚）を表示
-      const { playerId, declaredRank, declaredCount } = message.payload;
+      //const { playerId, declaredRank, declaredCount } = message.payload;
       console.log(
         `${playerId} が ${declaredRank} を ${declaredCount} 枚と申告しました。`,
       );
@@ -191,15 +211,12 @@ function handleIncomingMessage(message) {
       console.log("🚫 PASSメッセージを受信 - パス情報:", message.payload);
       break;
     case "result": // ダウトの成否、ペナルティ、ゲーム結果などの情報
-      console.log(
-        "🎉 RESULTメッセージを受信 - ダウト結果/ゲーム結果:",
-        message.payload,
-      );
-      const { isChallengeSuccessful, loserId, cardsToTake } = message.payload;
+      console.log("result");
+      //  const { ChallengeSuccessful, loserId, cardsToTake } = message.payload;
 
-      if (isChallengeSuccessful !== undefined) {
+      if (ChallengeSuccessful !== undefined) {
         // ダウトの結果処理
-        if (isChallengeSuccessful) {
+        if (ChallengeSuccessful) {
           console.log(
             `ダウト成功! ${loserId} のライフが1減った!`,
           );
@@ -315,11 +332,12 @@ document.getElementById("play-button").addEventListener(
   "click",
   () => {
     console.log("play");
-    const selectElement = document.getElementById("declare-num");
-    const declaredRank = parseInt(selectElement.value, 10);
-    console.log(declaredRank);
     jokerChange();
-    if (declaredCount == 1) {
+    const selectElement = document.getElementById("declare-num");
+    declaredRank = parseInt(selectElement.value, 10);
+    playerId = userid;
+    console.log(declaredRank);
+    if (declaredCount == 1 || declaredCount == 0) {
       if (back == 0) {
         if (declaredRank > 6) {
           //sendPlay(playerId, actualCards, declaredRank, declaredCount);
@@ -345,12 +363,15 @@ document.getElementById("pass-button").addEventListener(
   "click",
   () => {
     console.log("pass");
+    playerId = userid;
+    //sendPass(playerId);
+
     if (back == 0) {
       back = 1;
     } else {
-      back == 0;
+      back = 0;
     }
-    //sendPass(playerId);
+    console.log("11バックテスト", back);
   },
 );
 
@@ -358,6 +379,7 @@ document.getElementById("doubt-button").addEventListener(
   "click",
   () => {
     console.log("doubt");
+    challengerId = userid;
     //sendChallenge(challengerId);
   },
 );
