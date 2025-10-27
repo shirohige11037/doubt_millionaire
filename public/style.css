@@ -2,7 +2,7 @@
 body {
   background-image: url("images/background.png");
   background-repeat: no-repeat;
-  background-position: center center;
+  background-position: top center;
   background-size: cover; /* contain も候補 */
   background-attachment: scroll;
   background-color: #81c981;
@@ -12,7 +12,6 @@ body {
   height: 100vh;
   margin: 0;
 }
-
 form {
   width: 90%;
   max-width: 400px;
