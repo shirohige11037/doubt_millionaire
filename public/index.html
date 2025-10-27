@@ -1,23 +1,87 @@
 <!DOCTYPE html>
 <html lang="ja">
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ダウト大富豪</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: sans-serif;
+      }
 
-    <meta charset="UTF-8">
-    <title>ダウト大富豪-ユーザー情報入力</title>
-    <link rel="stylesheet" href="style.css">
+      /* 背景全体 */
+      .hero {
+        position: relative;
+        width: 100%;
+        min-height: 100vh; /* 画面いっぱい or 中身に応じて伸びる */
+        background: url("/images/background.png") center top / cover
+          no-repeat;
+        box-sizing: border-box;
+        padding-top: 200px; /* ロゴの下にスペースを確保 */
+      }
+
+      /* ロゴを中央上部に配置 */
+      .hero .logo {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: 40vw;
+        height: auto;
+      }
+
+      /* フォーム部分 */
+      #contactForm {
+        width: 80%;
+        max-width: 400px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.85);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      label {
+        display: block;
+        margin-top: 10px;
+      }
+
+      input, textarea, button {
+        display: block;
+        width: 100%;
+        margin-top: 5px;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+      }
+
+      button {
+        margin-top: 20px;
+        background: #4a6;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+    </style>
   </head>
   <body>
-    <form action="/matching" method="get" id="contactForm">
-      <h2>名前と合言葉を入力してください</h2>
+    <div class="hero">
+      <img src="/images/title.png" class="logo" alt="ロゴ">
 
-      <label for="name">名前：</label>
-      <input type="text" id="nameText" name="name" required>
+      <form action="/matching" method="get" id="contactForm">
+        <h2>名前と合言葉を入力してください</h2>
 
-      <label for="room">合言葉：</label>
-      <textarea type="text" id="roomText" name="room" required></textarea>
+        <label for="nameText">名前：</label>
+        <input type="text" id="nameText" name="name" required>
 
-      <button type="submit" id="toMatching">入室</button>
-    </form>
+        <label for="roomText">合言葉：</label>
+        <textarea id="roomText" name="room" required></textarea>
+
+        <button type="button" id="toMatching">入室</button>
+      </form>
+    </div>
+    <script src="index.js" defer></script>
   </body>
 </html>
