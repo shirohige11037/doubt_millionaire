@@ -1,146 +1,158 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>大富豪 ルール設定 & 待合所</title>
-</head>
-<body>
+  </head>
+  <body>
     <div id="waiting-room-wrapper">
-        <div class="room">
-            <h1>待合所</h1>
+      <div class="room">
+        <h1>待合所</h1>
 
-            <ul class="user-list">
-                <li class="user">
-                    <div class="icon leader"></div>
-                    <span class="user-name">ユーザー1 (リーダー)</span>
-                </li>
-                <li class="user">
-                    <div class="icon"></div>
-                    <span class="user-name">ユーザー2</span>
-                </li>
-                <li class="user">
-                    <div class="icon"></div>
-                    <span class="user-name">ユーザー3</span>
-                </li>
-                <li class="user">
-                    <div class="icon"></div>
-                    <span class="user-name">ユーザー4</span>
-                </li>
-                <li class="user">
-                    <div class="icon"></div>
-                    <span class="user-name">ユーザー5</span>
-                </li>
-                <li class="user">
-                    <div class="icon"></div>
-                    <span class="user-name">ユーザー6</span>
-                </li>
-            </ul>
+        <ul class="user-list">
+          <li class="user">
+            <div class="icon leader"></div>
+            <span class="user-name" id="user-1">ユーザー1 (リーダー)</span>
+          </li>
+          <li class="user">
+            <div class="icon"></div>
+            <span class="user-name" id="user-2">ユーザー2</span>
+          </li>
+          <li class="user">
+            <div class="icon"></div>
+            <span class="user-name" id="user-3">ユーザー3</span>
+          </li>
+          <li class="user">
+            <div class="icon"></div>
+            <span class="user-name" id="user-4">ユーザー4</span>
+          </li>
+          <li class="user">
+            <div class="icon"></div>
+            <span class="user-name" id="user-5">ユーザー5</span>
+          </li>
+          <li class="user">
+            <div class="icon"></div>
+            <span class="user-name" id="user-6">ユーザー6</span>
+          </li>
+        </ul>
 
-            <div class="button-area">
-                <button class="start-btn">ゲーム開始</button>
-                <button class="exit-btn">退出</button>
-            </div>
+        <div class="button-area">
+          <button class="start-btn">ゲーム開始</button>
+          <button class="exit-btn">退出</button>
         </div>
+      </div>
     </div>
 
     <div id="rule-app-container">
-        <h1>大富豪 ローカルルール設定</h1>
+      <h1>大富豪 ローカルルール設定</h1>
 
-        <section class="rule-group fixed-rules">
-            <h2>固定ルール（常にON）</h2>
-            <div class="rule-item fixed">
-                <div class="rule-description">
-                    <h3>8切り</h3>
-                    <p>数字の「8」が出されたら、その場が流れる。（次の人は最初からカードを出せる）。</p>
-                </div>
-                <div class="switch-container fixed-on">ON</div>
-            </div>
-            <div class="rule-item fixed">
-                <div class="rule-description">
-                    <h3>11バック</h3>
-                    <p>数字の「J(11)」が出されたら、その場限りカードの強さが逆転する。</p>
-                </div>
-                <div class="switch-container fixed-on">ON</div>
-            </div>
-            <div class="rule-item fixed">
-                <div class="rule-description">
-                    <h3>革命</h3>
-                    <p>同じ数字のカードを4枚同時に出すと、カードの強さが逆転します。</p>
-                </div>
-                <div class="switch-container fixed-on">ON</div>
-            </div>
-        </section>
+      <section class="rule-group fixed-rules">
+        <h2>固定ルール（常にON）</h2>
+        <div class="rule-item fixed">
+          <div class="rule-description">
+            <h3>8切り</h3>
+            <p>
+              数字の「8」が出されたら、その場が流れる。（次の人は最初からカードを出せる）。
+            </p>
+          </div>
+          <div class="switch-container fixed-on">ON</div>
+        </div>
+        <div class="rule-item fixed">
+          <div class="rule-description">
+            <h3>11バック</h3>
+            <p>
+              数字の「J(11)」が出されたら、その場限りカードの強さが逆転する。
+            </p>
+          </div>
+          <div class="switch-container fixed-on">ON</div>
+        </div>
+        <div class="rule-item fixed">
+          <div class="rule-description">
+            <h3>革命</h3>
+            <p>同じ数字のカードを4枚同時に出すと、カードの強さが逆転します。</p>
+          </div>
+          <div class="switch-container fixed-on">ON</div>
+        </div>
+      </section>
 
-        <section class="rule-group optional-rules">
-            <h2>オプションルール（ON/OFF切替可能）</h2>
+      <section class="rule-group optional-rules">
+        <h2>オプションルール（ON/OFF切替可能）</h2>
 
-            <label class="rule-item switchable">
-                <div class="rule-description">
-                    <h3>4止め</h3>
-                    <p>「8」が場に出された後、「4」を場に2枚出すと場が流れる</p>
-                </div>
-                <input type="checkbox" id="rule-4止め" class="switch-input">
-                <span class="switch-slider"></span>
-            </label>
+        <label class="rule-item switchable">
+          <div class="rule-description">
+            <h3>4止め</h3>
+            <p>「8」が場に出された後、「4」を場に2枚出すと場が流れる</p>
+          </div>
+          <input type="checkbox" id="rule-4止め" class="switch-input">
+          <span class="switch-slider"></span>
+        </label>
 
-            <label class="rule-item switchable">
-                <div class="rule-description">
-                    <h3>5スキップ</h3>
-                    <p>数字の「5」が出されたとき、出された枚数だけ人がカードを出せずパスになります。</p>
-                </div>
-                <input type="checkbox" id="rule-5すき" class="switch-input">
-                <span class="switch-slider"></span>
-            </label>
+        <label class="rule-item switchable">
+          <div class="rule-description">
+            <h3>5スキップ</h3>
+            <p>
+              数字の「5」が出されたとき、出された枚数だけ人がカードを出せずパスになります。
+            </p>
+          </div>
+          <input type="checkbox" id="rule-5すき" class="switch-input">
+          <span class="switch-slider"></span>
+        </label>
 
-            <label class="rule-item switchable">
-                <div class="rule-description">
-                    <h3>7渡し</h3>
-                    <p>数字の「7」が出されたとき、自分の手札から「7」を出した数だけ次の人に渡せる。</p>
-                </div>
-                <input type="checkbox" id="rule-7渡し" class="switch-input">
-                <span class="switch-slider"></span>
-            </label>
+        <label class="rule-item switchable">
+          <div class="rule-description">
+            <h3>7渡し</h3>
+            <p>
+              数字の「7」が出されたとき、自分の手札から「7」を出した数だけ次の人に渡せる。
+            </p>
+          </div>
+          <input type="checkbox" id="rule-7渡し" class="switch-input">
+          <span class="switch-slider"></span>
+        </label>
 
-            <label class="rule-item switchable">
-                <div class="rule-description">
-                    <h3>9リバース</h3>
-                    <p>数字の「9」が出されたとき、カードを出す順番が逆周りになる。</p>
-                </div>
-                <input type="checkbox" id="rule-9リバース" class="switch-input">
-                <span class="switch-slider"></span>
-            </label>
+        <label class="rule-item switchable">
+          <div class="rule-description">
+            <h3>9リバース</h3>
+            <p>数字の「9」が出されたとき、カードを出す順番が逆周りになる。</p>
+          </div>
+          <input type="checkbox" id="rule-9リバース" class="switch-input">
+          <span class="switch-slider"></span>
+        </label>
 
-            <label class="rule-item switchable">
-                <div class="rule-description">
-                    <h3>10捨て</h3>
-                    <p>数字の「10」が出されたら、自分の手札から「10」が出された数だけ場に捨てれる。</p>
-                </div>
-                <input type="checkbox" id="rule-10捨て" class="switch-input">
-                <span class="switch-slider"></span>
-            </label>
+        <label class="rule-item switchable">
+          <div class="rule-description">
+            <h3>10捨て</h3>
+            <p>
+              数字の「10」が出されたら、自分の手札から「10」が出された数だけ場に捨てれる。
+            </p>
+          </div>
+          <input type="checkbox" id="rule-10捨て" class="switch-input">
+          <span class="switch-slider"></span>
+        </label>
 
-            <label class="rule-item switchable">
-                <div class="rule-description">
-                    <h3>大革命</h3>
-                    <p>同じ数字のカードを6枚同時に出すと、カードの強さが逆転し無条件でゲームに勝利する。</p>
-                </div>
-                <input type="checkbox" id="rule-大革命" class="switch-input">
-                <span class="switch-slider"></span>
-            </label>
+        <label class="rule-item switchable">
+          <div class="rule-description">
+            <h3>大革命</h3>
+            <p>
+              同じ数字のカードを6枚同時に出すと、カードの強さが逆転し無条件でゲームに勝利する。
+            </p>
+          </div>
+          <input type="checkbox" id="rule-大革命" class="switch-input">
+          <span class="switch-slider"></span>
+        </label>
 
-            <label class="rule-item switchable">
-                <div class="rule-description">
-                    <h3>下剋上</h3>
-                    <p>同じ数字のカードを5枚同時に出すと、ゲームに勝利する。</p>
-                </div>
-                <input type="checkbox" id="rule-下剋上" class="switch-input">
-                <span class="switch-slider"></span>
-            </label>
-        </section>
+        <label class="rule-item switchable">
+          <div class="rule-description">
+            <h3>下剋上</h3>
+            <p>同じ数字のカードを5枚同時に出すと、ゲームに勝利する。</p>
+          </div>
+          <input type="checkbox" id="rule-下剋上" class="switch-input">
+          <span class="switch-slider"></span>
+        </label>
+      </section>
     </div>
 
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
