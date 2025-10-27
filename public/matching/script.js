@@ -11,7 +11,10 @@ if (window.location.protocol === "https:") {
 const MAX_PLAYERS = 5;
 
 // ユーザーがリーダーかどうかを判定するフラグ (ここでは仮にtrue)
-const isLeader = true;
+let isLeader = false;
+
+let members;
+let userid;
 
 // ----------------------------------------------------
 // 状態管理変数
@@ -135,7 +138,7 @@ function connectWebSocket() {
 
   const roomname = params.get("room");
   const username = params.get("name");
-  const userid = params.get("id");
+  userid = params.get("id");
 
   websocket = new WebSocket(
     `${SERVER_URL}?room=${roomname}&name=${username}&id=${userid}`,
@@ -158,7 +161,7 @@ function connectWebSocket() {
         console.log(
           "現在の人数: " + gameState.playerCount + " / " + MAX_PLAYERS,
         );
-
+        /*
         // 5人集まったことをチェックし、ゲーム開始をトリガー
         if (gameState.playerCount === MAX_PLAYERS && !gameState.gameStarted) {
           console.log(
@@ -166,6 +169,12 @@ function connectWebSocket() {
           );
           sendFinalRules();
         }
+          */
+      }
+
+      if (receivedData.members !== undefined) {
+        members = receivedData.members;
+        isLeader = userid === members[0];
       }
 
       // ゲーム開始状態の更新

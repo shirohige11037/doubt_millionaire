@@ -15,21 +15,24 @@ async function deleteUser(userid, roomname) {
   }
 
   await kv.delete(["username", userid]);
-  userSockets.delete([roomname, userid]);
+  userSockets.delete("room:" + roomname + "id:" + userid);
 
   if (nowRoom.length < 1) {
     kv.delete(["rooms", roomname]);
   } else {
     kv.set(["rooms", roomname], nowRoom);
     for (let i = 0; i < nowRoom.length; i++) {
-      const sendSocket = userSockets.get(
-        "room:" + roomname + "id:" + nowRoom[i],
-      );
+      if (userSockets.has("room:" + roomname + "id:" + nowRoom[i])) {
+        const sendSocket = userSockets.get(
+          "room:" + roomname + "id:" + nowRoom[i],
+        );
 
-      sendSocket.send(JSON.stringify({
-        type: "changeMember",
-        playerCount: nowRoom.length,
-      }));
+        sendSocket.send(JSON.stringify({
+          type: "changeMember",
+          playerCount: nowRoom.length,
+          members: room,
+        }));
+      } else console.log(userSockets);
     }
   }
 }
@@ -51,7 +54,7 @@ Deno.serve(async (req) => {
     const roomname = params.get("room");
     const username = params.get("name");
     const userid = params.get("id");
-    console.log(`room=${roomname},name=&${username},id=${userid}`);
+    console.log(`room=${roomname},name=${username},id=${userid}`);
     if (username === "" || userid === "" || roomname === "") {
       console.log("error401");
       return new Response("あなたは誰ですか？", { status: 401 });
@@ -68,7 +71,6 @@ Deno.serve(async (req) => {
     socket.onopen = async () => {
       const rooms = await kv.get(["rooms", roomname]);
       let room = rooms.value;
-      console.log(room);
       if (room === null) {
         room = [userid];
         await kv.set(["rooms", roomname], room);
@@ -84,9 +86,7 @@ Deno.serve(async (req) => {
         }
         await kv.set(["rooms", roomname], room);
       }
-      console.log(room);
       userSockets.set("room:" + roomname + "id:" + userid, socket);
-      console.log(userSockets.get("room:" + roomname + "id:" + userid));
 
       socket.onclose = async () => {
         console.log("close:" + userid);
@@ -100,18 +100,20 @@ Deno.serve(async (req) => {
         socket.onclose = null;
         socket.onerror = null;
       };
-      console.log(room);
+      console.log(`open${room}`);
 
       for (let i = 0; i < room.length; i++) {
-        const sendSocket = userSockets.get(
-          "room:" + roomname + "id:" + userid,
-        );
+        if (userSockets.has("room:" + roomname + "id:" + room[i])) {
+          const sendSocket = userSockets.get(
+            "room:" + roomname + "id:" + room[i],
+          );
 
-        console.log(sendSocket);
-        sendSocket.send(JSON.stringify({
-          type: "changeMember",
-          playerCount: room.length,
-        }));
+          sendSocket.send(JSON.stringify({
+            type: "changeMember",
+            playerCount: room.length,
+            members: room,
+          }));
+        } else console.log(userSockets);
       }
     };
 
