@@ -30,7 +30,7 @@ async function deleteUser(userid, roomname) {
         sendSocket.send(JSON.stringify({
           type: "changeMember",
           playerCount: nowRoom.length,
-          members: room,
+          members: nowRoom,
         }));
       } else console.log(userSockets);
     }
@@ -45,8 +45,18 @@ Deno.serve(async (req) => {
   const pathname = new URL(req.url).pathname;
   console.log(pathname);
 
-  if (pathname === "/matchinguu") {
-    return new Response("matching");
+  if (pathname === "/getid") {
+    const params = new URL(req.url).searchParams;
+    const username = params.get("name");
+    let answer = username;
+    for (let i = 0;; i++) {
+      if ((await kv.get(["username", answer])).value === undefined) {
+        await kv.set(["username", answer]);
+        break;
+      }
+      answer = username + "-" + i.toString() + "-";
+    }
+    return new Response(username);
   }
 
   if (pathname === "/ws/game") {
@@ -60,11 +70,18 @@ Deno.serve(async (req) => {
       return new Response("あなたは誰ですか？", { status: 401 });
     }
 
-    if ((await kv.get(["username", userid])) !== username) {
+    if ((await kv.get(["username", userid])).value !== username) {
       await kv.set(["username", userid], username);
-    } else { //if ((await kv.get(["username", userid])) !== username)
+    } /*else if ((await kv.get(["username", userid])).value !== username){
       console.log("error402");
       return new Response("idと名前に関連がありません", { status: 402 });
+    }*/
+
+    const MAX_MEMBER = 6;
+
+    if ((await kv.get(["rooms", roomname])).value?.length >= MAX_MEMBER) {
+      console.log("error403");
+      return new Response("部屋がいっぱいいっぱいです", { status: 403 });
     }
 
     const { socket, response } = Deno.upgradeWebSocket(req);

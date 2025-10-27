@@ -175,6 +175,17 @@ function connectWebSocket() {
       if (receivedData.members !== undefined) {
         members = receivedData.members;
         isLeader = userid === members[0];
+        for (let i = 0; i < 6; i++) {
+          let name;
+          if (i < members.length) {
+            name = members[i];
+          } else {
+            name = "ユーザー" + (i + 1).toString();
+          }
+          if (i === 0) name += " (リーダー)";
+          document.getElementById("user-" + (i + 1).toString()).textContent =
+            name;
+        }
       }
 
       // ゲーム開始状態の更新
