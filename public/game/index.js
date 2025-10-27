@@ -1,5 +1,15 @@
 // 接続するWebSocketサーバーのURL
 const WS_URL = "ws://localhost:8080/game";
+const TURN_LIMIT = 60; // ターンの制限時間 (秒)
+const DOUBT_LIMIT = 5; // ダウトタイムの制限時間 (秒)
+
+let back = 0;
+let declaredCount = 1;
+let currentTimer = null; // タイマーIDを保持
+let timeLeft = 0; // 残り時間 (秒)
+let currentPhase = null; // 現在のフェーズ ('turn' または 'doubt')
+
+const timerDisplay = document.getElementById("timer-display");
 
 let socket;
 
@@ -53,7 +63,79 @@ function connectWebSocket() {
  * @param {number[]} actualCards - 実際に出したカードの配列 (例: [5, 5])
  * @param {number} declaredRank - 申告した数字 (例: 5)
  * @param {number} declaredCount - 申告した枚数 (例: 2)
+ * @param {number} duration - 制限時間 (秒)
+ * @param {string} phase - 'turn' または 'doubt'
  */
+
+function startTimer(duration, phase) {
+  stopTimer(); // 既存のタイマーを停止
+
+  timeLeft = duration;
+  currentPhase = phase;
+
+  // UIを初期表示
+  updateTimerDisplay();
+
+  // 1秒ごとにタイマーを更新
+  currentTimer = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+
+    if (timeLeft <= 0) {
+      stopTimer();
+      handleTimeOut(); // 時間切れ処理を実行
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  if (currentTimer) {
+    clearInterval(currentTimer);
+    currentTimer = null;
+  }
+  // 画面表示もクリア
+  timerDisplay.textContent = "";
+}
+
+function updateTimerDisplay() {
+  if (currentTimer) {
+    // 残り時間が5秒を切ったら赤色にするなど、視覚的なフィードバックを入れると良い
+    timerDisplay.textContent = `残り時間: ${timeLeft} 秒`;
+    if (timeLeft <= 5) {
+      timerDisplay.style.color = "red";
+    } else {
+      timerDisplay.style.color = "black";
+    }
+  }
+}
+
+function handleTimeOut() {
+  console.log(
+    `${currentPhase}が時間切れになりました。自動的にパスを送信します。`,
+  );
+
+  let timeOutMessage;
+  if (currentPhase === "turn") {
+    // 通常のターンでの時間切れ
+    timeOutMessage = {
+      type: "play",
+      action: "pass", // プレイヤーはパスを選択
+    };
+  } else if (currentPhase === "doubt") {
+    // ダウトタイムでの時間切れ（ダウトしない）
+    timeOutMessage = {
+      type: "doubt_action",
+      action: "no_doubt", // ダウトしないことを選択
+    };
+  }
+
+  if (timeOutMessage) {
+    ws.send(JSON.stringify(timeOutMessage));
+  }
+
+  // 時間切れでパスを送信したら、サーバーからの次の状態更新を待つ
+}
+
 function handleIncomingMessage(message) {
   switch (message.type) {
     case "init": // 👈 受信専用として残す
@@ -71,6 +153,31 @@ function handleIncomingMessage(message) {
         "🎲 TURNメッセージを受信 - 現在のターン情報:",
         message.payload,
       );
+      if (message.is_my_turn) {
+        // 自分のターンならタイマーを開始
+        startTimer(TURN_LIMIT, "turn");
+        console.log("あなたのターンです。タイマー開始。");
+      } else {
+        // 自分のターンでなければ、タイマーを停止・クリア
+        stopTimer();
+      }
+      break;
+    case "doubt_start":
+      // サーバーから「ダウトタイムの開始」が通知された
+      if (message.is_my_turn) {
+        // ダウトするかどうかを判断するプレイヤーならタイマーを開始
+        startTimer(DOUBT_LIMIT, "doubt");
+        console.log("ダウトタイム開始。タイマー開始。");
+      } else {
+        // 関係ないプレイヤーなら、タイマーを停止・クリア
+        stopTimer();
+      }
+      break;
+    case "game_update":
+      // 誰かが手を打った、ダウトが解決したなどで状態が更新された
+      // 次のフェーズに移るため、タイマーを停止
+      stopTimer();
+      // ...その他のゲーム状態更新処理...
       break;
     case "play": // 他のプレイヤーのカード出し/申告情報
       console.log("🃏 PLAYメッセージを受信 - プレイ情報:", message.payload);
@@ -94,12 +201,11 @@ function handleIncomingMessage(message) {
         // ダウトの結果処理
         if (isChallengeSuccessful) {
           console.log(
-            `ダウト成功！ ${loserId} が失敗し、場札をすべて引き取ります。`,
+            `ダウト成功! ${loserId} のライフが1減った!`,
           );
         } else {
-          console.log(`ダウト失敗... ${loserId} が場札をすべて引き取ります。`);
+          console.log(`ダウト失敗... ${loserId} のライフ1減った!`);
         }
-        // ペナルティで手札に追加されたカードをUIに反映する処理など
       }
       // 例: 誰の勝ちでゲームが終了したかの処理もここで行う
       // if (message.payload.winnerId) { ... }
@@ -113,6 +219,22 @@ function handleIncomingMessage(message) {
       break;
     default:
       console.warn("不明なメッセージタイプ:", message.type);
+  }
+}
+
+function jokerChange() {
+  //変更したい要素を現在のIDで取得
+  const jokerElement = document.getElementById("joker-id");
+  let newValue;
+  if (back == 0) {
+    newValue = "200";
+  } else {
+    newValue = "0";
+  }
+
+  if (jokerElement) {
+    // valueを変更
+    jokerElement.value = newValue;
   }
 }
 
@@ -182,9 +304,60 @@ function sendChallenge(challengerId) {
 // 使用例
 // ----------------------------------------------------
 
-connectWebSocket();
+//connectWebSocket();
 
 // パスを送る機能は残っています
 // setTimeout(() => {
 //     sendPass('player_A');
 // }, 5000);
+
+document.getElementById("play-button").addEventListener(
+  "click",
+  () => {
+    console.log("play");
+    const selectElement = document.getElementById("declare-num");
+    const declaredRank = parseInt(selectElement.value, 10);
+    console.log(declaredRank);
+    jokerChange();
+    if (declaredCount == 1) {
+      if (back == 0) {
+        if (declaredRank > 6) {
+          //sendPlay(playerId, actualCards, declaredRank, declaredCount);
+          console.log("場に出した");
+        } else {
+          console.log("数字が小さい");
+        }
+      } else {
+        if (declaredRank < 6) {
+          //sendPlay(playerId, actualCards, declaredRank, declaredCount);
+          console.log("場に出した");
+        } else {
+          console.log("数字が大きい");
+        }
+      }
+    } else {
+      console.log("選択枚数が正しくない");
+    }
+  },
+);
+
+document.getElementById("pass-button").addEventListener(
+  "click",
+  () => {
+    console.log("pass");
+    if (back == 0) {
+      back = 1;
+    } else {
+      back == 0;
+    }
+    //sendPass(playerId);
+  },
+);
+
+document.getElementById("doubt-button").addEventListener(
+  "click",
+  () => {
+    console.log("doubt");
+    //sendChallenge(challengerId);
+  },
+);
