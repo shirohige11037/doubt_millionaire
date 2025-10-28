@@ -6,6 +6,13 @@ if (window.location.protocol === "https:") {
 } else {
   SERVER_URL = `ws://${location.host}/ws/matching`;
 }
+let GAME_URL;
+
+if (window.location.protocol === "https:") {
+  GAME_URL = `https://${location.host}/game`;
+} else {
+  GAME_URL = `http://${location.host}/game`;
+}
 
 // 最大プレイ人数を設定
 const MAX_PLAYERS = 5;
@@ -150,7 +157,7 @@ function connectWebSocket() {
     sendPlayerCount(1); // 自身の入室をサーバーに通知
   };
 
-  websocket.onmessage = (event) => {
+  websocket.onmessage = async (event) => {
     console.log("メッセージ受信:", event.data);
 
     try {
@@ -193,11 +200,24 @@ function connectWebSocket() {
         }
       }
 
+      if (receivedData.rules !== undefined) {
+        const switches = document.querySelectorAll(".switch-input");
+
+        switches.forEach((switchElement) => {
+          const ruleName = switchElement.id.replace("rule-", "");
+
+          switchElement.checked = receivedData.rules[ruleName];
+        });
+      }
+
       // ゲーム開始状態の更新
       if (receivedData.gameStarted !== undefined) {
         gameState.gameStarted = receivedData.gameStarted;
         if (gameState.gameStarted) {
           console.log("サーバー側でゲームが開始されました！");
+          websocket.close();
+          window.location.href =
+            `${GAME_URL}?room=${roomname}&name=${username}&id=${userid}`;
         }
       }
     } catch (e) {
@@ -241,7 +261,7 @@ function updateRule(ruleName, newValue) {
       'ルール "' + ruleName + '" が "' + newValue +
         '" に変更されました (保留中)',
     );
-    sendChangeRules();
+    if (isLeader) sendChangeRules();
   } else {
     console.warn("無効なルール名: " + ruleName);
   }
@@ -304,6 +324,7 @@ function sendFinalRules() {
  * （5人集まった時点(削除済みの機能)、またはリーダーが開始ボタンを押したときに呼び出されます）
  */
 function sendChangeRules() {
+  console.log("test");
   if (websocket && websocket.readyState === WebSocket.OPEN) {
     // 固定ルール（8切り、11バック、革命）も結合して送信
     const finalRules = {

@@ -138,11 +138,22 @@ Deno.serve(async (req) => {
                     "room:" + roomname + "id:" + room[i],
                   );
 
+                  if (receivedData.gameStarted) {
+                    sendSocket.onclose = null;
+                    sendSocket.onerror = null;
+                  }
+
+                  console.log("rule send to " + room[i]);
+
                   sendSocket.send(JSON.stringify({
                     type: "changeRules",
                     rules: receivedData.rules,
-                    gamestarted: receivedData.gamestarted,
+                    gameStarted: receivedData.gameStarted,
                   }));
+
+                  if (receivedData.gameStarted) {
+                    userSockets.delete("room:" + roomname + "id:" + room[i]);
+                  }
                 } else console.log(userSockets);
               }
 
