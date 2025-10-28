@@ -11,7 +11,7 @@ const DOUBT_LIMIT = 5; // ダウトタイムの制限時間 (秒)
 let back = 0;
 let declaredRank = 0;
 let declaredCount = 0;
-let actualCards = [];
+let actualCards = {};
 let currentTimer = null; // タイマーIDを保持
 let timeLeft = 0; // 残り時間 (秒)
 let currentPhase = null; // 現在のフェーズ ('turn' または 'doubt')
@@ -25,7 +25,7 @@ const timerDisplay = document.getElementById("timer-display");
 
 let socket;
 
-/*import {
+import {
   generateCardData,
   initCanvas,
   initCard,
@@ -43,6 +43,7 @@ const PLAYER_HAND_DATA = generateCardData(12);
 document.addEventListener("DOMContentLoaded", () => {
   // 1. Canvasを初期化し、グローバルオブジェクト (window.opponentCardListsなど) を作成
   initCanvas(200);
+  console.log("aa");
 
   // 2. ゲームデータの初期設定 (グローバルオブジェクトに依存)
 
@@ -78,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // UI イベントリスナーの設定
   // =======================================================
 
-  document.getElementById("p1Play").addEventListener(
+  /*document.getElementById("p1Play").addEventListener(
     "click",
     () => {
       playSelectedCard1();
@@ -99,11 +100,11 @@ document.addEventListener("DOMContentLoaded", () => {
       // ダウト演出の開始関数を呼び出す
       startDoubtEffect();
     },
-  );
+  );*/
 
   // ウィンドウサイズ変更時にCanvasサイズを調整
   window.addEventListener("resize", setDispSize);
-});*/
+});
 // ----------------------------------------------------
 // 1. WebSocket接続の確立
 // ----------------------------------------------------
@@ -151,7 +152,7 @@ function connectWebSocket() {
  * サーバーから受信したメッセージを処理する関数
  * @param {object} message - サーバーから送られてきたメッセージオブジェクト
  * @param {string} playerId - カードを出したプレイヤーID
- * @param {number[]} actualCards - 実際に出したカードの配列 (例: [5, 5])
+ * @param {number{}} actualCards - 実際に出したカードの配列 (例: [5, 5])
  * @param {number} declaredRank - 申告した数字 (例: 5)
  * @param {number} declaredCount - 申告した枚数 (例: 2)
  * @param {number} duration - 制限時間 (秒)
@@ -239,7 +240,7 @@ function handleIncomingMessage(message) {
       break;
     case "turn":
       console.log("phase:turn");
-      if (message.turn == "you") {
+      if (message.turn == username) {
         // 自分のターンならタイマーを開始
         startTimer(TURN_LIMIT, "turn");
         console.log("あなたのターンです。タイマー開始。");
@@ -251,7 +252,7 @@ function handleIncomingMessage(message) {
     case "doubt":
       // サーバーから「ダウトタイムの開始」が通知された
       console.log("phase:daubt");
-      if (message.doubt == "you") {
+      if (message.doubt != username) {
         // ダウトするかどうかを判断するプレイヤーならタイマーを開始
         startTimer(DOUBT_LIMIT, "doubt");
         console.log("ダウトタイム開始。タイマー開始。");
@@ -313,7 +314,7 @@ function jokerChange() {
   if (back == 0) {
     newValue = "200";
   } else {
-    newValue = "0";
+    newValue = "1";
   }
 
   if (jokerElement) {
@@ -402,17 +403,23 @@ document.getElementById("play-button").addEventListener(
     jokerChange();
     const selectElement = document.getElementById("declare-num");
     declaredRank = parseInt(selectElement.value, 10);
+    const p1Card = window.selectedCards.p1;
+    const declaredCount = p1Card.length;
+
+    console.log(declaredCount);
     console.log(declaredRank);
-    if (declaredCount == 1 || declaredCount == 0) {
+    if (declaredCount == 1) {
       if (back == 0) {
         if (declaredRank > 6) {
-          //sendPlay(userid, actualCards, declaredRank, declaredCount);
+          playSelectedCard1();
+          //sendPlay(userid, window.selectedCards, declaredRank, declaredCount);
           console.log("場に出した");
         } else {
           console.log("数字が小さい");
         }
       } else {
         if (declaredRank < 6) {
+          playSelectedCard1();
           //sendPlay(userid, actualCards, declaredRank, declaredCount);
           console.log("場に出した");
         } else {
@@ -444,6 +451,9 @@ document.getElementById("doubt-button").addEventListener(
   "click",
   () => {
     console.log("doubt");
+    const p1Card = window.selectedCards.p1;
+    const selectedCount = p1Card.length;
+    console.log(selectedCount);
     //sendChallenge(userid);
   },
 );
