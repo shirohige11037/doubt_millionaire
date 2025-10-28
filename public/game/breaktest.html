@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>breaktest</title>
+  <style>
+    /* フェードアウト用のCSSアニメーション */
+    #heart {
+      transition: opacity 1.5s ease;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  
+  <img id="heart" src="./images/Others/heartbreak0th.png" alt="heart" width="200">
+
+  <br>
+  <button id="startBtn" type="button">クリック！</button>
+
+  <script>
+    const img = [
+      "./images/Others/heartbreak0th.png",
+      "./images/Others/heartbreak1th.png",
+      "./images/Others/heartbreak2th.png",
+      "./images/Others/heartbreak3th.png",
+      "./images/Others/heartbreak4th.png",
+      "./images/Others/heartbreak5th.png"
+    ];
+
+    let count = 0;
+    let timerID = null;
+
+    const heart = document.getElementById("heart");
+    const button = document.getElementById("startBtn");
+
+    // ボタンクリック時の処理
+    button.addEventListener("click", () => {
+      // ボタンを一度押したら無効化
+      button.disabled = true;
+      // 処理開始
+      imgTimer();
+    });
+
+    function imgTimer() {
+      count++;
+
+      // まだ配列の範囲内なら画像を切り替え
+      if (count < img.length) {
+        heart.src = img[count];
+        timerID = setTimeout(imgTimer, 100); // 切替
+      } else {
+        // 最後の画像が終わったらフェードアウト
+        fadeOut();
+      }
+    }
+
+    function fadeOut() {
+      heart.style.opacity = 0; // フェードアウト開始
+      // 1.5秒後に処理終了（画面から消すなど）
+      setTimeout(() => {
+        heart.style.display = "none";
+      }, 1500);
+    }
+  </script>
+</body>
+</html>
