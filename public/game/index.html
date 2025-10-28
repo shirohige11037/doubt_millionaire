@@ -4,25 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet">
-    <!--href="styles.css"-->
+    <!--<href="styles.css"-->
     <style>
       body {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 100vh;
+        min-height: 100vh;
         margin: 0;
         background-color: #447244;
       }
-      #game-container {
+      #-container {
         width: 100%;
         max-width: 320px; /* スマホ縦画面を想定 */
         height: 85vh;
         position: relative;
-        background-color: #388E3C;
+        background-color: #388e3c;
         overflow: hidden;
       }
+
+      #area {
+        position: relative;
+        /* Canvasの固定サイズに合わせて幅と高さを設定 */
+        width: 500px;
+        height: 1000px;
+        border: 1px solid #ccc;
+        overflow: hidden;
+        background-color: #333; /* 背景色の確認用 */
+      }
+      /* Canvas要素 */
+      #gameScene {
+        display: block;
+        /* setDispSize() によってサイズが調整されます */
+      }
+
       #action-buttons {
         display: flex;
         gap: 15px;
@@ -46,30 +62,33 @@
       #pass-button {
         background-color: #f39c12;
       }
-      
+
       #pass-button:hover {
         background-color: #f1c40f;
       }
 
       #doubt-button {
-          background-color: #c0392b;
+        background-color: #c0392b;
       }
       #doubt-button:hover {
-          background-color: #e74c3c;
+        background-color: #e74c3c;
       }
-
     </style>
     <title>game</title>
   </head>
   <body>
+    <div id="area">
+      <canvas id="gameScene"></canvas>
+    </div>
+
     <div id="game-container">
       <div id="turn-indicator">
-        <span id="current-turn-player"></span> のターンです
+        <span id="current-turn-player"></span>
       </div>
-      
+
       <div id="timer-display"></div>
 
-      <div id="opponents-area">
+      <!--<div id="opponents-area">
           <div class="player-info" id="p1" data-name="">
             <div class="avatar"></div>
             <div class="name"></div>
@@ -95,58 +114,55 @@
             <div class="name"></div>
             <div class="card-count" data-cards=""></div>
           </div>
-      </div>
+      </div>-->
 
       <div id="playing-field">
         <!--<h3>場の情報</h3>
         <div id="field-info">
           <p>現在の宣言: <span id="declared-number">なし</span></p>
                 <p>枚数: <span id="declared-count">0</span>枚</p>-->
-        </div>
-      </div>
-
-      <div id="player-hand-area">
-        <div id="my-hand">
-          <!--<div class="card" data-card="S3">♠3</div>
-          <div class="card" data-card="H5">♥5</div>
-          <div class="card" data-card="D5">♦5</div>
-          <div class="card" data-card="C5">♣5</div>
-          <div class="card" data-card="SK">♠K</div>-->
-        </div>
-      </div>
-      <div id="control-panel">
-        <div id="declaration-area">
-          <label for="declare-num">数字選択:</label>
-          <select id="declare-num">
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-            <option value="11">J</option>
-            <option value="12">Q</option>
-            <option value="13">K</option>
-            <option value="101">A</option>
-            <option value="102">2</option>
-            <option value="200" id="joker-id">JOKER</option>
-          </select>
-          <span id="selected-count">選択:0枚</span>
-        </div>
-        <div id="action-buttons">
-          <button id="play-button">
-            場に出す
-          </button>
-          <button id="pass-button">パス</button>
-          <button id="doubt-button">ダウト！</button>
-        </div>
       </div>
     </div>
-    
+
+    <div id="player-hand-area">
+      <div id="my-hand">
+        <!--<div class="card" data-card="S3">♠3</div>
+        <div class="card" data-card="H5">♥5</div>
+        <div class="card" data-card="D5">♦5</div>
+        <div class="card" data-card="C5">♣5</div>
+        <div class="card" data-card="SK">♠K</div>-->
+      </div>
+    </div>
+
+    <div id="control-panel">
+      <div id="declaration-area">
+        <label for="declare-num">数字選択:</label>
+        <select id="declare-num">
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">J</option>
+          <option value="12">Q</option>
+          <option value="13">K</option>
+          <option value="101">A</option>
+          <option value="102">2</option>
+          <option value="200" id="joker-id">JOKER</option>
+        </select>
+        <span id="selected-count">選択:0枚</span>
+      </div>
+      <div id="action-buttons">
+        <button id="play-button">場に出す</button>
+        <button id="pass-button">パス</button>
+        <button id="doubt-button">ダウト！</button>
+      </div>
+    </div>
+
     <script type="module" src="./index.js">
-      
     </script>
   </body>
 </html>

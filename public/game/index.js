@@ -1,8 +1,8 @@
 const params = new URLSearchParams(window.location.search);
 
-const roomname = params.get("room");
-const username = params.get("name");
-const userid = params.get("id");
+const roomname = "room"; //params.get("room");
+const username = "name"; //params.get("name");
+const userid = "id"; //params.get("id");
 // 接続するWebSocketサーバーのURL
 const WS_URL = "ws://localhost:8080/game";
 const TURN_LIMIT = 60; // ターンの制限時間 (秒)
@@ -25,7 +25,7 @@ const timerDisplay = document.getElementById("timer-display");
 
 let socket;
 
-import {
+/*import {
   generateCardData,
   initCanvas,
   initCard,
@@ -37,6 +37,73 @@ import {
   startDoubtEffect,
 } from "./anim.js";
 
+// プレイヤー1の初期手札データ (12枚)
+const PLAYER_HAND_DATA = generateCardData(12);
+
+document.addEventListener("DOMContentLoaded", () => {
+  // 1. Canvasを初期化し、グローバルオブジェクト (window.opponentCardListsなど) を作成
+  initCanvas(200);
+
+  // 2. ゲームデータの初期設定 (グローバルオブジェクトに依存)
+
+  // P2の場に出すグループデータ (2枚, 3枚, 1枚を順番に出すシミュレーション)
+  window.playedCardGroups = {
+    p2: [
+      generateCardData(2),
+      generateCardData(3),
+      generateCardData(1),
+    ],
+  };
+  window.playedCardIndex = { p2: 0 };
+
+  // P2の手札枚数シミュレーション
+  window.opponentCardLists.hand2 = generateCardData(20);
+
+  // 3. その他の初期化処理
+
+  // 描画サイズの初期設定
+  setDispSize();
+
+  // プレイヤーの手札を初期化
+  initCard(PLAYER_HAND_DATA);
+
+  // イベントリスナーの設定 (マウス操作)
+  mouseHover();
+  mouseClick();
+
+  // 初期描画を開始 (initCardのPromise内で呼ばれる場合もあるが、念のため)
+  window.animateAndDraw();
+
+  // =======================================================
+  // UI イベントリスナーの設定
+  // =======================================================
+
+  document.getElementById("p1Play").addEventListener(
+    "click",
+    () => {
+      playSelectedCard1();
+    },
+  );
+
+  document.getElementById("p2Play").addEventListener(
+    "click",
+    () => {
+      playSelectedCard2();
+    },
+  );
+
+  // P1 ダウトボタンのイベントリスナー
+  document.getElementById("p1Doubt").addEventListener(
+    "click",
+    () => {
+      // ダウト演出の開始関数を呼び出す
+      startDoubtEffect();
+    },
+  );
+
+  // ウィンドウサイズ変更時にCanvasサイズを調整
+  window.addEventListener("resize", setDispSize);
+});*/
 // ----------------------------------------------------
 // 1. WebSocket接続の確立
 // ----------------------------------------------------
@@ -335,19 +402,18 @@ document.getElementById("play-button").addEventListener(
     jokerChange();
     const selectElement = document.getElementById("declare-num");
     declaredRank = parseInt(selectElement.value, 10);
-    playerId = userid;
     console.log(declaredRank);
     if (declaredCount == 1 || declaredCount == 0) {
       if (back == 0) {
         if (declaredRank > 6) {
-          //sendPlay(playerId, actualCards, declaredRank, declaredCount);
+          //sendPlay(userid, actualCards, declaredRank, declaredCount);
           console.log("場に出した");
         } else {
           console.log("数字が小さい");
         }
       } else {
         if (declaredRank < 6) {
-          //sendPlay(playerId, actualCards, declaredRank, declaredCount);
+          //sendPlay(userid, actualCards, declaredRank, declaredCount);
           console.log("場に出した");
         } else {
           console.log("数字が大きい");
@@ -363,8 +429,7 @@ document.getElementById("pass-button").addEventListener(
   "click",
   () => {
     console.log("pass");
-    playerId = userid;
-    //sendPass(playerId);
+    //sendPass(userid);
 
     if (back == 0) {
       back = 1;
@@ -379,7 +444,6 @@ document.getElementById("doubt-button").addEventListener(
   "click",
   () => {
     console.log("doubt");
-    challengerId = userid;
-    //sendChallenge(challengerId);
+    //sendChallenge(userid);
   },
 );
