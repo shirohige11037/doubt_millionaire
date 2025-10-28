@@ -27,10 +27,17 @@ async function deleteUser(userid, roomname) {
           "room:" + roomname + "id:" + nowRoom[i],
         );
 
+        const names = [];
+
+        for (let i = 0; i < nowRoom.length; i++) {
+          names.push((await kv.get(["username", nowRoom[i]])).value);
+        }
+
         sendSocket.send(JSON.stringify({
           type: "changeMember",
           playerCount: nowRoom.length,
           members: nowRoom,
+          names: names,
         }));
       } else console.log(userSockets);
     }
@@ -51,7 +58,7 @@ Deno.serve(async (req) => {
     let answer = username;
     for (let i = 0;; i++) {
       if ((await kv.get(["username", answer])).value === null) {
-        await kv.set(["username", answer]);
+        await kv.set(["username", answer], username);
         break;
       }
       answer = username + "-" + i.toString() + "-";
@@ -59,7 +66,7 @@ Deno.serve(async (req) => {
     return new Response(answer);
   }
 
-  if (pathname === "/ws/game") {
+  if (pathname === "/ws/matching") {
     const params = new URL(req.url).searchParams;
     const roomname = params.get("room");
     const username = params.get("name");
@@ -117,7 +124,53 @@ Deno.serve(async (req) => {
         socket.onclose = null;
         socket.onerror = null;
       };
+
+      socket.onmessage = async (event) => {
+        console.log("message:" + userid);
+        console.log(event.data);
+        try {
+          const receivedData = JSON.parse(event.data);
+          switch (receivedData.type) {
+            case "rules_set":
+              for (let i = 0; i < room.length; i++) {
+                if (userSockets.has("room:" + roomname + "id:" + room[i])) {
+                  const sendSocket = userSockets.get(
+                    "room:" + roomname + "id:" + room[i],
+                  );
+
+                  if (receivedData.gameStarted) {
+                    sendSocket.onclose = null;
+                    sendSocket.onerror = null;
+                  }
+
+                  console.log("rule send to " + room[i]);
+
+                  sendSocket.send(JSON.stringify({
+                    type: "changeRules",
+                    rules: receivedData.rules,
+                    gameStarted: receivedData.gameStarted,
+                  }));
+
+                  if (receivedData.gameStarted) {
+                    userSockets.delete("room:" + roomname + "id:" + room[i]);
+                  }
+                } else console.log(userSockets);
+              }
+
+              break;
+          }
+        } catch (e) {
+          console.error("受信データのパースエラー:", e);
+        }
+      };
+
       console.log(`open${room}`);
+
+      const names = [];
+
+      for (let i = 0; i < room.length; i++) {
+        names.push((await kv.get(["username", room[i]])).value);
+      }
 
       for (let i = 0; i < room.length; i++) {
         if (userSockets.has("room:" + roomname + "id:" + room[i])) {
@@ -129,6 +182,7 @@ Deno.serve(async (req) => {
             type: "changeMember",
             playerCount: room.length,
             members: room,
+            names: names,
           }));
         } else console.log(userSockets);
       }

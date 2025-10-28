@@ -2,9 +2,16 @@
 let SERVER_URL;
 
 if (window.location.protocol === "https:") {
-  SERVER_URL = `wss://${location.host}/ws/game`;
+  SERVER_URL = `wss://${location.host}/ws/matching`;
 } else {
-  SERVER_URL = `ws://${location.host}/ws/game`;
+  SERVER_URL = `ws://${location.host}/ws/matching`;
+}
+let GAME_URL;
+
+if (window.location.protocol === "https:") {
+  GAME_URL = `https://${location.host}/game`;
+} else {
+  GAME_URL = `http://${location.host}/game`;
 }
 
 // 最大プレイ人数を設定
@@ -14,6 +21,7 @@ const MAX_PLAYERS = 5;
 let isLeader = false;
 
 let members;
+let names;
 let userid;
 
 // ----------------------------------------------------
@@ -40,7 +48,7 @@ let gameState = {
   gameStarted: false,
 };
 
-// HTMLで変更されたルールを一時的に保持する変数（最終送信までサーバーには送らない）
+// HTMLで変更されたルールを一時的に保持する変数
 let pendingRuleChanges = { ...gameState.rules };
 
 let websocket;
@@ -149,7 +157,7 @@ function connectWebSocket() {
     sendPlayerCount(1); // 自身の入室をサーバーに通知
   };
 
-  websocket.onmessage = (event) => {
+  websocket.onmessage = async (event) => {
     console.log("メッセージ受信:", event.data);
 
     try {
@@ -175,10 +183,14 @@ function connectWebSocket() {
       if (receivedData.members !== undefined) {
         members = receivedData.members;
         isLeader = userid === members[0];
+      }
+
+      if (receivedData.names !== undefined) {
+        names = receivedData.names;
         for (let i = 0; i < 6; i++) {
           let name;
-          if (i < members.length) {
-            name = members[i];
+          if (i < names.length) {
+            name = names[i];
           } else {
             name = "ユーザー" + (i + 1).toString();
           }
@@ -188,11 +200,24 @@ function connectWebSocket() {
         }
       }
 
+      if (receivedData.rules !== undefined) {
+        const switches = document.querySelectorAll(".switch-input");
+
+        switches.forEach((switchElement) => {
+          const ruleName = switchElement.id.replace("rule-", "");
+
+          switchElement.checked = receivedData.rules[ruleName];
+        });
+      }
+
       // ゲーム開始状態の更新
       if (receivedData.gameStarted !== undefined) {
         gameState.gameStarted = receivedData.gameStarted;
         if (gameState.gameStarted) {
           console.log("サーバー側でゲームが開始されました！");
+          websocket.close();
+          window.location.href =
+            `${GAME_URL}?room=${roomname}&name=${username}&id=${userid}`;
         }
       }
     } catch (e) {
@@ -236,6 +261,7 @@ function updateRule(ruleName, newValue) {
       'ルール "' + ruleName + '" が "' + newValue +
         '" に変更されました (保留中)',
     );
+    if (isLeader) sendChangeRules();
   } else {
     console.warn("無効なルール名: " + ruleName);
   }
@@ -264,7 +290,7 @@ function sendPlayerCount(change) {
 
 /**
  * 最終的に確定したルール変更をサーバーに送信し、ゲーム開始を通知する
- * （5人集まった時点、またはリーダーが開始ボタンを押したときに呼び出されます）
+ * （5人集まった時点(削除済みの機能)、またはリーダーが開始ボタンを押したときに呼び出されます）
  */
 function sendFinalRules() {
   if (websocket && websocket.readyState === WebSocket.OPEN) {
@@ -278,12 +304,44 @@ function sendFinalRules() {
 
     // 送信するメッセージの構造
     const message = {
-      type: "final_rules_set",
+      type: "rules_set",
       rules: finalRules, // 最終ルール全体を送信
       gameStarted: true,
     };
     websocket.send(JSON.stringify(message));
     console.log("最終的な確定ルールとゲーム開始情報をサーバーに送信:", message);
+
+    // ローカルのゲーム状態を更新
+    gameState.rules = { ...finalRules }; // 固定ルールも含む最終ルールで更新
+    gameState.gameStarted = true;
+  } else {
+    console.warn("WebSocketが接続されていません。");
+  }
+}
+
+/**
+ * 最終的に確定したルール変更をサーバーに送信し、ゲーム開始を通知する
+ * （5人集まった時点(削除済みの機能)、またはリーダーが開始ボタンを押したときに呼び出されます）
+ */
+function sendChangeRules() {
+  console.log("test");
+  if (websocket && websocket.readyState === WebSocket.OPEN) {
+    // 固定ルール（8切り、11バック、革命）も結合して送信
+    const finalRules = {
+      "8切り": true,
+      "11バック": true,
+      "革命": true,
+      ...pendingRuleChanges, // 変更可能なオプションルール
+    };
+
+    // 送信するメッセージの構造
+    const message = {
+      type: "rules_set",
+      rules: finalRules, // 最終ルール全体を送信
+      gameStarted: false,
+    };
+    websocket.send(JSON.stringify(message));
+    console.log("変更ルールをサーバーに送信:", message);
 
     // ローカルのゲーム状態を更新
     gameState.rules = { ...finalRules }; // 固定ルールも含む最終ルールで更新
