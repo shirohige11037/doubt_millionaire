@@ -1,5 +1,6 @@
 import { serveDir } from "jsr:@std/http/file-server";
 //import { returnPlayedCardCount } from "./public/game/anim.js";
+import{gamedata}from "./gamedata.server.js";
 
 const kv = await Deno.openKv();
 
