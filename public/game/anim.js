@@ -84,7 +84,7 @@ export function initCanvas(playerHandYOffset) {
   window.handCenterYOffset = 450;
   window.handStaticRotation = 0;
   window.hand2CenterXOffset = 0;
-  window.hand2CenterYOffset = -450;
+  window.hand2CenterYOffset = -10000;
   window.hand2StaticRotation = 180;
 
   // 7. アニメーション制御変数
@@ -273,7 +273,7 @@ export function mouseHover() {
 
 export function mouseClick() {
   // 右クリック (選択中/手札のカードを場に出す)
-  window.canvas.addEventListener("contextmenu", (e) => {
+  /*window.canvas.addEventListener("contextmenu", (e) => {
     e.preventDefault();
     if (window.isAnimating) return;
 
@@ -312,7 +312,7 @@ export function mouseClick() {
       updateCardLayout(true);
       animateAndDraw(-1, -1);
     }
-  });
+  });*/
 
   // 左クリック (手札 ↔ 選択中 の移動)
   window.canvas.addEventListener("click", (e) => {
@@ -350,6 +350,12 @@ export function mouseClick() {
       updateCardLayout(true);
       animateAndDraw(-1, -1);
     }
+
+    const p1Card = window.selectedCards.p1;
+    const declaredCount = p1Card.length;
+    console.log(declaredCount);
+    const element = document.getElementById("selected-count");
+    element.textContent = "選択:" + declaredCount + "枚";
   });
 }
 
