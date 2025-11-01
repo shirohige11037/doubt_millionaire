@@ -20,6 +20,17 @@ let myHand = []; // 自分の手札 (カードオブジェクトの配列)
 let allPlayers = []; // 全プレイヤーの情報 (名前、ID、手札枚数)
 let turnOrder = []; // プレイヤーの順番 (IDの配列)
 let gameRules = {}; // ゲームルール設定
+let state = [];
+let currentTurn;
+let field = [];
+
+/*
+     phase = message.phase; //turn,doubt,(役処理),
+      state = message.state;
+      turn = message.turn;
+      allPlayers = message.allplayers; //全員の名前、id、手札枚数handCount、順番(0~5)、ライフ
+      played = message.played;
+*/
 
 const timerDisplay = document.getElementById("timer-display");
 
@@ -47,6 +58,7 @@ import {
 
 // プレイヤー1の初期手札データ (12枚)
 const PLAYER_HAND_DATA = generateCardData(12);
+//const PLAYER_HAND_DATA = ;
 
 document.addEventListener("DOMContentLoaded", () => {
   // 1. Canvasを初期化し、グローバルオブジェクト (window.opponentCardListsなど) を作成
@@ -246,36 +258,40 @@ function handleIncomingMessage(message) {
       // 例: 手札の表示、ルールの設定など
       myHand = message.hand; //自分の手札
       gameRules = message.rules; //ゲームのルール
-      turnOrder = message.order; //全員の順番
-      allPlayers = message.allplayers; //全員の名前、id、手札枚数
+      //turnOrder = message.order; //全員の順番
+      currentPhase = message.phase; //turn,doubt,(役処理),
+      state = message.state;
+      currentTurn = message.turn;
+      allPlayers = message.allplayers; //全員の名前、id、手札枚数handCount、順番(0~5)、ライフ
+      field = message.played;
       break;
     case "turn":
       console.log("phase:turn");
-      if (message.turn == username) {
+      if (message.turn == userid) {
         // 自分のターンならタイマーを開始
-        startTimer(TURN_LIMIT, "turn");
-        console.log("あなたのターンです。タイマー開始。");
+        //startTimer(TURN_LIMIT, "turn");
+        //console.log("あなたのターンです。タイマー開始。");
       } else {
         // 自分のターンでなければ、タイマーを停止・クリア
-        stopTimer();
+        //stopTimer();
       }
       break;
     case "doubt":
       // サーバーから「ダウトタイムの開始」が通知された
       console.log("phase:daubt");
-      if (message.doubt != username) {
+      if (message.doubt != userid) {
         // ダウトするかどうかを判断するプレイヤーならタイマーを開始
-        startTimer(DOUBT_LIMIT, "doubt");
-        console.log("ダウトタイム開始。タイマー開始。");
+        //startTimer(DOUBT_LIMIT, "doubt");
+        //console.log("ダウトタイム開始。タイマー開始。");
       } else {
         // 関係ないプレイヤーなら、タイマーを停止・クリア
-        stopTimer();
+        //stopTimer();
       }
       break;
     case "game_update":
       // 誰かが手を打った、ダウトが解決したなどで状態が更新された
       // 次のフェーズに移るため、タイマーを停止
-      stopTimer();
+      //stopTimer();
       // ...その他のゲーム状態更新処理...
       break;
     case "play": // 他のプレイヤーのカード出し/申告情報
@@ -415,8 +431,9 @@ document.getElementById("play-button").addEventListener(
     const selectElement = document.getElementById("declare-num");
     declaredRank = parseInt(selectElement.value, 10);
     const p1Card = window.selectedCards.p1;
-    const declaredCount = p1Card.length;
-    const gameCardCount = 1;
+    declaredCount = p1Card.length;
+    const gameCardCount = 1; //場の枚数が入る
+    //actualCards
     console.log("場の枚数:", gameCardCount);
     console.log(declaredCount);
     console.log(declaredRank);
@@ -463,7 +480,6 @@ document.getElementById("doubt-button").addEventListener(
   "click",
   () => {
     console.log("doubt");
-    const p1Card = window.selectedCards.p1;
     const selectedCount = p1Card.length;
     console.log(selectedCount);
     //sendChallenge(userid);
