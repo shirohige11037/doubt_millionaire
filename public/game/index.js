@@ -405,10 +405,11 @@ document.getElementById("play-button").addEventListener(
     declaredRank = parseInt(selectElement.value, 10);
     const p1Card = window.selectedCards.p1;
     const declaredCount = p1Card.length;
-
+    const gameCardCount = 1;
+    console.log("場の枚数:", gameCardCount);
     console.log(declaredCount);
     console.log(declaredRank);
-    if (declaredCount == 1) {
+    if (declaredCount == gameCardCount || gameCardCount == 0) {
       if (back == 0) {
         if (declaredRank > 6) {
           playSelectedCard1();
