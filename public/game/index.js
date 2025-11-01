@@ -23,6 +23,14 @@ let gameRules = {}; // ゲームルール設定
 
 const timerDisplay = document.getElementById("timer-display");
 
+let SERVER_URL;
+
+if (window.location.protocol === "https:") {
+  SERVER_URL = `wss://${location.host}/ws/game`;
+} else {
+  SERVER_URL = `ws://${location.host}/ws/game`;
+}
+
 let socket;
 
 import {
@@ -117,7 +125,10 @@ function connectWebSocket() {
     socket.close();
   }
 
-  socket = new WebSocket(WS_URL);
+  socket = new WebSocket(
+    `${SERVER_URL}?room=${roomname}&name=${username}&id=${userid}`,
+  );
+  //socket = new WebSocket(WS_URL);
 
   socket.onopen = (event) => {
     console.log("✅ WebSocket接続が確立されました。", event);
